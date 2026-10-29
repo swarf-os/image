@@ -81,6 +81,16 @@ abrt
 abrt-desktop
 phonon-qt6-backend-vlc
 
+# --- Branding: fedora-logos is kept on purpose (SPEC), generic-logos never
+generic-logos
+
+# --- Dropped in step 2 (names kept in docs/optional-packages.md)
+kdeplasma-addons
+ksshaskpass
+pinentry-qt
+wireguard-tools
+alsa-sof-firmware
+
 # --- Fedora third-party mechanism and filtered Flathub (full Flathub instead)
 fedora-third-party
 fedora-flathub-remote
