@@ -42,3 +42,5 @@ Steps come from `SPEC.md` (section "Steps").
   - Reboot reminder: none, maintainer decision (0011). Discover's notifier shows no reboot notice when unattended updates are on.
   - VM `swarf-dev` rebuilt; `tests/check-config.sh` prints OK, including the new checks (keys, timers, polkit rule, hosts block). `bootc container lint`: 14 passed, 1 skipped, 0 warnings.
   - NOT verified: a real unattended run (needs a newer image in a registry and a logged-in session; steps 5 and 8), what the panel icon shows once an update is staged, and that Discover copes quietly with the blocked ODRS host. The visual check of the step 3 XDG settings remains the maintainer's.
+  - Checked afterwards in the VM: `getent ahostsv6 odrs.gnome.org` returns `::ffff:0.0.0.0`, so IPv6 lookups are blocked too (no extra hosts line needed).
+  - `tests/check-config.sh` sets `XDG_CONFIG_DIRS` itself: its OK proves the file is readable, not that the real session picks it up. For the maintainer, after login: System Settings → Software Update should show automatic updates, daily. Not marked done.
