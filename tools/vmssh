@@ -1,0 +1,7 @@
+#!/bin/bash
+# Run a command as root in the session VM "swarf-dev". Usage: tools/vmssh 'command'
+R=$(cd "$(dirname "$0")/.." && pwd)
+W=${SWARF_WORK:-$(cd "$R/.." && pwd)/work}
+exec ssh -q -i "$W/vm/id_swarf_test" -p 2222 \
+    -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5 -o BatchMode=yes \
+    root@127.0.0.1 "$@"

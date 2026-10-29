@@ -1,0 +1,6 @@
+# Test-only image: swarf-os plus an SSH server, for test VMs (bcvk, libvirt). Never published.
+# The root SSH key comes from the systemd credential ssh.authorized_keys.root.
+ARG BASE=localhost/swarf-os:dev
+FROM ${BASE}
+RUN dnf -y --setopt=install_weak_deps=False install openssh-server && dnf clean all && \
+    systemctl enable sshd.service
