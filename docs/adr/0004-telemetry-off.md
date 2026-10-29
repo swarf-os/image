@@ -1,6 +1,6 @@
 # 0004 — Telemetry off (step 3)
 
-Date: 2026-10-29. Status: accepted, one item deferred to step 4.
+Date: 2026-10-29. Status: accepted; the ODRS item was closed in step 4 (0010).
 
 ## Context
 SPEC lists KUserFeedback, Discover reviews, the NetworkManager connectivity check and
@@ -19,7 +19,7 @@ SPEC lists KUserFeedback, Discover reviews, the NetworkManager connectivity chec
   Verified `disabled` in the VM by `tests/check-config.sh`.
 - **DrKonqi:** not installed (`plasma-drkonqi` is blacklisted).
 
-## Deferred: Discover reviews (ODRS)
+## Discover reviews (ODRS): decided in step 4, see 0010
 Discover 6.7.5 has no setting for this. `OdrsReviewsBackend` downloads
 `https://odrs.gnome.org/1.0/reviews/api/ratings` on every start (cached one day), and on
 opening an application page it POSTs `app_id`, `distro`, `version`, `locale` and a

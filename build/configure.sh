@@ -37,3 +37,10 @@ if grep -q '^VARIANT_ID=' /usr/lib/os-release; then
 else
     echo 'VARIANT_ID=custom' >>/usr/lib/os-release
 fi
+
+# Task manager with icons and text (docs/adr/0012): the default panel layout uses the
+# icons-only widget. Fail the build if Plasma changes the template.
+layout=/usr/share/plasma/layout-templates/org.kde.plasma.desktop.defaultPanel/contents/layout.js
+grep -q 'addWidget("org.kde.plasma.icontasks")' "$layout"
+sed -i 's/"org\.kde\.plasma\.icontasks"/"org.kde.plasma.taskmanager"/' "$layout"
+grep -q 'addWidget("org.kde.plasma.taskmanager")' "$layout"

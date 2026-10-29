@@ -81,7 +81,7 @@ FROM quay.io/fedora/fedora-bootc:${FEDORA_MAJOR}
 
 ## Settings
 - No hardening beyond what is free to keep. Kept from Kyanite level 1 (ADR 0003): kernel and network sysctl (without `oops_limit`/`warn_limit`), core dumps off, random Wi-Fi MAC (Fedora default `stable-ssid`), KDE GHNS off. Everything else is dropped.
-- Telemetry: off (ADR 0004): KUserFeedback, NM connectivity check, `rpm-ostree-countme.timer`; DrKonqi not installed. Discover reviews (ODRS) have no setting: decided in step 4.
+- Telemetry: off (ADR 0004): KUserFeedback, NM connectivity check, `rpm-ostree-countme.timer`; DrKonqi not installed. Discover reviews (ODRS) have no setting: blocked in `/etc/hosts` (ADR 0010).
 - KWallet: not wanted at all (`kwalletd6` and `ksecretd` disabled by config, package kept, no PAM unlock, no manager; ADR 0005).
 - Firewall: `firewalld` + `plasma-firewall`, no `firewall-config` GUI. Default zone `swarf`: only `dhcpv6-client` and `mdns` open, no ssh (ADR 0007).
 - `sudo` (not `run0`), to keep the Fedora default and maintain less.
@@ -168,7 +168,7 @@ FROM quay.io/fedora/fedora-bootc:${FEDORA_MAJOR}
 - Availability of `swarf-os` (GHCR package, search engines, trademark registers). If it fails, only the ISO prefix and the image name change; the organization can be renamed.
 - Fedora version policy: pinned `FEDORA_MAJOR` + automatic bump pull request (Kyanite ADR 0001), or `:latest`. Also check whether F45 is final (it was NO-GO on 2026-10-15, target 2026-10-27, fallback 2026-11-03) before choosing the start version.
 - Licence: MIT or Apache-2.0.
-- Reboot reminder after a staged update (Discover shows none with unattended updates on).
+- (closed, step 4, ADR 0011: no reminder.)
 - GHCR image public or private with a read-only token on machines.
 - Actions minutes and KVM on the chosen CI.
 - `SHA256SUMS` signing identity: keyless or dedicated key.

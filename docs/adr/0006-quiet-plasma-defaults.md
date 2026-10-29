@@ -9,7 +9,7 @@ is untouched: Kyanite's breeze-dark override is dropped.
 
 | Item | File and key | Source checked |
 |---|---|---|
-| No splash screen | `ksplashrc [KSplash] Engine=none, Theme=None` | `startplasma.cpp` 6.7.5 starts `ksplashqml` only for `KSplashQML` |
+| No splash screen | `ksplashrc [KSplash] Engine[$i]=none, Theme[$i]=None` (immutable, see below) | `startplasma.cpp` 6.7.5 starts `ksplashqml` only for `KSplashQML` |
 | Overview effect off | `kwinrc [Plugins] overviewEnabled=false` | `effectloader.cpp`: key is `<effect>Enabled` |
 | System bell effect off | `kwinrc [Plugins] systembellEnabled=false` | same |
 | Zoom effect off | `kwinrc [Plugins] zoomEnabled=false` | same |
@@ -27,3 +27,10 @@ Shake-to-enlarge cursor stays on.
   modules visible but unusable (Kyanite ADR 0014).
 - No pinned applications in the task manager: it was part of the dropped branding workarounds.
 - `plasma-kaccess.service` drop-in: on the SPEC drop list.
+
+## Correction (2026-10-29, after the maintainer's visual check)
+The splash screen still appeared. In the session, `XDG_CONFIG_DIRS` starts with
+`~/.config/kdedefaults`, which Plasma fills at first login from the look-and-feel
+(`ksplashrc Engine=KSplashQML`), so it shadowed our default. Fix: mark both keys immutable
+(`Engine[$i]`); tested in the VM with `kreadconfig6` and a simulated `kdedefaults`
+(returns `none`, and `KSplashQML` without `[$i]`). Not yet seen on a fresh login.

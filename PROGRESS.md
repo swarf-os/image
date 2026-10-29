@@ -5,7 +5,7 @@ Steps come from `SPEC.md` (section "Steps").
 - [x] 1. Repo set up with the free licence, `SECURITY.md` and private vulnerability reporting; import and trim the Kyanite recipe (no branding code); minimal whitelist; `podman build` passes `bootc container lint`; the VM boots on Plasma with Secure Boot.
 - [x] 2. Package lists: final whitelist and blacklist; decide the KDE apps and locales one by one; confirm hard dependencies in the image (`rpm -q --whatrequires`).
 - [x] 3. Config: telemetry off, services, firewall, KWallet off, quiet defaults.
-- [ ] 4. Update behaviour: Discover updates Flatpak and system, staged, no password, no reboot; decide the reboot reminder.
+- [x] 4. Update behaviour: Discover updates Flatpak and system, staged, no password, no reboot; decide the reboot reminder.
 - [ ] 5. CI: daily build, manifest check, boot test, `:testing` → `:stable`, issue on failure.
 - [ ] 6. ISO: Titanoboa, Anaconda WebUI, LUKS, keymap check, Flatpaks embedded and installed offline, Plasma Setup at first boot; install from USB on the NUC and the Framework.
 - [ ] 7. Cloudflare: R2 bucket, Worker, download page with the visual password, upload from CI.
@@ -36,3 +36,15 @@ Steps come from `SPEC.md` (section "Steps").
   - NOT verified: the XDG defaults (KWallet, splash, KWin effects, KUserFeedback) only act in a real logged-in Plasma session; the maintainer must check them visually after first login.
   - Deferred to step 4: Discover ODRS reviews (no setting to disable them in Discover 6.7.5, see `docs/adr/0004-telemetry-off.md`).
   - Disclosed choice: `VARIANT_ID=custom` in os-release.
+- Session 4 : step 4 done (see `docs/adr/0009` to `0011`).
+  - Discover unattended updates on, daily, via `/usr/share/swarf/xdg/PlasmaDiscoverUpdates` (Discover 6.7.5 defaults to off; this image has no Kinoite file). No password: polkit rule from `fedora-release-ostree-desktop` (rpm-ostree) and `pkaction` `implicit active: yes` for Flatpak app/runtime update. `bootc-fetch-apply-updates.timer` and `rpm-ostreed-automatic.timer` stay disabled (0009).
+  - ODRS reviews: no setting exists, so `odrs.gnome.org` is blocked in `/etc/hosts` (`system/etc/hosts`, 0010). Discover shows no ratings.
+  - Reboot reminder: none, maintainer decision (0011). Discover's notifier shows no reboot notice when unattended updates are on.
+  - VM `swarf-dev` rebuilt; `tests/check-config.sh` prints OK, including the new checks (keys, timers, polkit rule, hosts block). `bootc container lint`: 14 passed, 1 skipped, 0 warnings.
+  - NOT verified: a real unattended run (needs a newer image in a registry and a logged-in session; steps 5 and 8), what the panel icon shows once an update is staged, and that Discover copes quietly with the blocked ODRS host. The visual check of the step 3 XDG settings remains the maintainer's.
+  - Checked afterwards in the VM: `getent ahostsv6 odrs.gnome.org` returns `::ffff:0.0.0.0`, so IPv6 lookups are blocked too (no extra hosts line needed).
+  - `tests/check-config.sh` sets `XDG_CONFIG_DIRS` itself: its OK proves the file is readable, not that the real session picks it up. For the maintainer, after login: System Settings → Software Update should show automatic updates, daily. Not marked done.
+  - Maintainer's visual check of the VM (2026-10-29): Software Update page OK, Overview off OK, KWallet not opening OK, system bell off OK, Orca absent OK. Two defects found and fixed: the splash screen still showed (`~/.config/kdedefaults/ksplashrc` shadowed our default; keys now immutable, ADR 0006 correction) and the task manager was icons-only (now icons and text, ADR 0012, also changes `build/configure.sh`).
+  - Both fixes were tested live in the VM (`bootc usroverlay`, no rebuild): `tests/check-config.sh` OK, panel screenshot shows titles, Discover opens a Flathub app page without error with ODRS blocked ("0 note"). NOT yet rebuilt from the Containerfile: the next full build must pass `configure.sh` (its greps fail the build if the layout template changed) and `bootc container lint`. Splash absence still to be seen on a fresh login.
+  - Flatpak apps (Waterfox, VLC) are absent from the VM by design: they come from the ISO in step 6. The unattended update error in the VM is expected: the VM image `localhost/swarf-os:test` has no registry.
+  - Moved to step 5 (maintainer decision): (1) first full build from the Containerfile with the step 4 changes (`configure.sh` layout greps, `bootc container lint`); (2) splash screen absent and task manager with titles on a fresh login in a VM built from that image; (3) a real unattended update, once `:testing` sits on GHCR and a VM boots an older image from it. Step 4 is closed apart from these.
