@@ -1,0 +1,23 @@
+# Service presets. Lower numbers win over the base image presets
+# (85-bootc.preset, 86-bootc-standard.preset).
+
+# Updates are applied by Discover (unattended updates); this timer reboots without asking.
+disable bootc-fetch-apply-updates.timer
+
+# Classic users only.
+disable systemd-homed.service
+disable systemd-homed-activate.service
+
+# Flathub only.
+disable flatpak-add-fedora-repos.service
+
+# No telemetry.
+disable rpm-ostree-countme.timer
+
+# No software RAID on desktops.
+disable mdmonitor.service
+disable raid-check.timer
+
+# Zeroconf is not needed (avahi is pulled by nss-mdns; also masked in build/configure.sh).
+disable avahi-daemon.service
+disable avahi-daemon.socket

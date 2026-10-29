@@ -1,0 +1,140 @@
+# Blacklist: nothing listed here may be present in the final image.
+# One entry per line; shell-style globs allowed (plasma-nm-*). The build:
+#   1. [remove]       : removes these packages from the base image with dnf, before
+#                       installing whitelist.txt (dependencies are respected);
+#   2. installs whitelist.txt;
+#   3. fails if any entry of [remove] or [repos] is still present.
+# Never force a removal (rpm --nodeps): unwanted services pulled by mandatory
+# dependencies (geoclue2, avahi) are masked in build/configure.sh (Kyanite ADR 0002).
+# All steps run in a single image layer: the final image keeps no trace of what was
+# installed and then removed.
+
+[remove]
+
+# --- Bluetooth, printing, modems
+bluez
+bluedevil
+passim
+cups
+cups-browsed
+cups-filters
+ModemManager
+fwupd-plugin-modem-manager
+
+# --- Audio server: no sound by default (audio is a documented rpm-ostree layering)
+pipewire
+wireplumber
+pipewire-pulseaudio
+pipewire-alsa
+plasma-pa
+
+# --- Network plugins (Wi-Fi and WireGuard only)
+NetworkManager-ppp
+NetworkManager-adsl
+NetworkManager-wwan
+NetworkManager-openvpn
+NetworkManager-openconnect
+NetworkManager-vpnc
+NetworkManager-pptp
+NetworkManager-l2tp
+NetworkManager-libreswan
+NetworkManager-cloud-setup
+plasma-nm-*
+
+# --- Package management that does not fit bootc
+PackageKit
+PackageKit-command-not-found
+plasma-discover-packagekit
+plasma-discover-offline-updates
+plasma-discover-snap
+
+# --- X11 session (Wayland only, XWayland kept)
+xorg-x11-server-Xorg
+
+# --- Qt5 / KDE Frameworks 5 (the image is Qt6 only)
+qt5-qtbase
+
+# --- KWallet front-ends (the library stays, the service is disabled)
+kwalletmanager5
+pam-kwallet
+
+# --- Applications excluded (Kyanite ADR 0003)
+kde-connect
+okular
+elisa-player
+dragon
+akonadi-server
+kmail
+kontact
+korganizer
+neochat
+kmouth
+skanpage
+krdc
+krfb
+krdp
+firewall-config
+plasma-vault
+plasma-welcome
+plasma-drkonqi
+abrt
+abrt-desktop
+phonon-qt6-backend-vlc
+
+# --- Fedora third-party mechanism and filtered Flathub (full Flathub instead)
+fedora-third-party
+fedora-flathub-remote
+
+# --- Cloud and virtual machine agents
+WALinuxAgent-udev
+cloud-utils-growpart
+python3-boto3
+python3-botocore
+python3-s3transfer
+python3-jmespath
+
+# --- Emulators for foreign CPU architectures
+qemu-user-static*
+
+# --- Server and enterprise components
+openssh-server
+sssd-ad
+sssd-ipa
+sssd-krb5
+sssd-ldap
+sssd-common
+sssd-common-pac
+sssd-krb5-common
+sssd-nfs-idmap
+adcli
+adcli-selinux
+nfs-utils
+nfs-client-utils
+nfs-common-utils
+nfsv3-client-utils
+nfsv4-client-utils
+rpcbind
+gssproxy
+quota
+kdump-utils
+kexec-tools
+makedumpfile
+sos
+stalld
+iptables-services
+iptables-utils
+console-login-helper-messages
+console-login-helper-messages-issuegen
+console-login-helper-messages-profile
+
+# --- Firmware for hardware outside the scope (Intel graphics only, no modems)
+nvidia-gpu-firmware
+amd-gpu-firmware
+amd-ucode-firmware
+qcom-wwan-firmware
+
+[repos]
+rpmfusion-*
+negativo17-*
+_copr*
+*ublue*

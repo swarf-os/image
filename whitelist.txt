@@ -1,0 +1,62 @@
+# Packages installed explicitly on top of quay.io/fedora/fedora-bootc:44,
+# with install_weak_deps=False. One package per line. Minimal set for step 1;
+# the final list is decided in step 2.
+
+# --- Plasma core (kwayland-integration is left out on purpose: it pulls Qt5/KF5)
+plasma-desktop
+plasma-workspace
+kwin
+kscreen
+kscreenlocker
+kactivitymanagerd
+kdecoration
+layer-shell-qt
+qt6-qtwayland
+plasma-integration
+plasma-breeze
+breeze-icon-theme
+plasma-login-manager
+kcm-plasmalogin
+plasma-setup
+plasma-nm
+polkit-kde
+plasma-systemsettings
+xdg-desktop-portal-kde
+kde-gtk-config
+xorg-x11-server-Xwayland
+powerdevil
+power-profiles-daemon
+
+# --- Applications
+dolphin
+filelight
+konsole
+
+# --- Discover: Flatpak + system updates; fedora-release-ostree-desktop brings the polkit rule
+plasma-discover
+plasma-discover-notifier
+plasma-discover-flatpak
+plasma-discover-rpm-ostree
+fedora-release-ostree-desktop
+
+# --- Firewall (no firewall-config GUI)
+firewalld
+plasma-firewall
+plasma-firewall-firewalld
+
+# --- Network
+NetworkManager-wifi
+wpa_supplicant
+
+# --- Graphics (Intel; no audio server, see blacklist.txt)
+mesa-dri-drivers
+mesa-vulkan-drivers
+libva-intel-media-driver
+
+# --- Flatpak and system tools
+flatpak
+udisks2
+systemd-oomd-defaults
+
+# --- Fonts
+default-fonts-core
