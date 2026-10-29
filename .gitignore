@@ -1,0 +1,13 @@
+# Logs
+*.log
+logs/
+
+# Local build artifacts
+*.iso
+*.qcow2
+*.raw
+*.img
+*.tar
+output/
+build-out/
+tmp/
