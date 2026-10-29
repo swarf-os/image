@@ -1,7 +1,8 @@
 # SPEC — swarf-os, a personal Fedora bootc image (Plasma, minimal)
 
-Draft 10 · 2026-10-29 · names decided (`swarf-os`). Fedora bootc path; the Arch version is kept as `claude/SPEC-arch-backup.md` in the planning project (fallback if this path becomes too hard). Kyanite archive (read for draft 8): `fbmguerin/archive-kyanite-os-fedora-custom`.
+Draft 11 · 2026-10-29 · names decided (`swarf-os`). Fedora bootc path; the Arch version is kept as `claude/SPEC-arch-backup.md` in the planning project (fallback if this path becomes too hard). Kyanite archive (read for draft 8): `fbmguerin/archive-kyanite-os-fedora-custom`.
 Sources: the Kyanite ADRs, Containerfile, lists and roadmap (read 2026-10-29), plus two Arch/distro comparison reports. Items marked (to verify) were not checked against a primary source in this draft.
+Draft 11 (2026-10-29, step 3): settings decided (ADR 0003 to 0008); firewall is a closed `swarf` zone, not Fedora's `public`; Discover reviews (ODRS) deferred to step 4.
 Draft 10 (2026-10-29, step 2): KDE apps, locales and fonts decided (ADR 0002); the 155 `hunspell-*` and all glibc locales are kept after all.
 Draft 9 changes: project, organization, repository, image and ISO names fixed; contact and security section added; name availability check still pending.
 Draft 8 changes: Fedora logos kept knowingly, free licence, README wording decided, fallback if Fedora objects.
@@ -21,11 +22,11 @@ Draft 8 changes: Fedora logos kept knowingly, free licence, README wording decid
 - Not wanted by default: Bluetooth, printing, modems, audio server, remote access (ssh server, RDP, VNC), X11 session, telemetry, apps imposed by the distribution.
 
 ## Principles carried over from Kyanite (still valid)
-- Additive base: start from the bare `quay.io/fedora/fedora-bootc:N` and name every package (ADR 0001/0002). Subtractive images silently build whatever Fedora adds.
-- Never force a removal (`rpm --nodeps`): mask or disable the service instead (ADR 0002).
-- Fedora's signed kernel, never rebuilt, no out-of-tree modules (Secure Boot without MOK, ADR 0005).
+- Additive base: start from the bare `quay.io/fedora/fedora-bootc:N` and name every package (Kyanite ADR 0001/0002). Subtractive images silently build whatever Fedora adds.
+- Never force a removal (`rpm --nodeps`): mask or disable the service instead (Kyanite ADR 0002).
+- Fedora's signed kernel, never rebuilt, no out-of-tree modules (Secure Boot without MOK, Kyanite ADR 0005).
 - System updates come only from my registry (tested, signed image), never `dnf upgrade` on the machine.
-- KDE defaults go in `/usr/share/<name>/xdg/` read through `XDG_CONFIG_DIRS`; `/etc` stays untouched except my named files (ADR 0014).
+- KDE defaults go in `/usr/share/<name>/xdg/` read through `XDG_CONFIG_DIRS`; `/etc` stays untouched except my named files (Kyanite ADR 0014).
 - Test in a VM, rootless. Never `sudo`/`run0` on the host from the agent's shell (broke systemd on the build host).
 
 ## Identity, naming, branding and licence
@@ -79,13 +80,13 @@ FROM quay.io/fedora/fedora-bootc:${FEDORA_MAJOR}
 - Hard dependencies that stay installed: `geoclue2`, `avahi` (via kio-extras/nss-mdns), `kwallet` library. Services masked/disabled, packages kept so RPM dependencies stay intact.
 
 ## Settings
-- No hardening beyond what is free to keep. Level 1 hardening (ADR 0006): reread, decide if any of it stays.
-- Telemetry: off everywhere (ADR 0015 plan: KUserFeedback, Discover reviews, NM connectivity check, `rpm-ostree-countme.timer` disabled; DrKonqi not installed).
-- KWallet: not wanted at all (service disabled, no PAM unlock, no manager).
-- Firewall: `firewalld` + `plasma-firewall`, no `firewall-config` GUI.
+- No hardening beyond what is free to keep. Kept from Kyanite level 1 (ADR 0003): kernel and network sysctl (without `oops_limit`/`warn_limit`), core dumps off, random Wi-Fi MAC (Fedora default `stable-ssid`), KDE GHNS off. Everything else is dropped.
+- Telemetry: off (ADR 0004): KUserFeedback, NM connectivity check, `rpm-ostree-countme.timer`; DrKonqi not installed. Discover reviews (ODRS) have no setting: decided in step 4.
+- KWallet: not wanted at all (`kwalletd6` and `ksecretd` disabled by config, package kept, no PAM unlock, no manager; ADR 0005).
+- Firewall: `firewalld` + `plasma-firewall`, no `firewall-config` GUI. Default zone `swarf`: only `dhcpv6-client` and `mdns` open, no ssh (ADR 0007).
 - `sudo` (not `run0`), to keep the Fedora default and maintain less.
 - Services disabled: `bootc-fetch-apply-updates.timer`, `systemd-homed`, `flatpak-add-fedora-repos`, `rpm-ostree-countme.timer`, `mdmonitor`, `raid-check.timer`. Masked: `geoclue`, `avahi-daemon`.
-- Quiet, minimal Plasma defaults (ADR 0016): reread, port what is still wanted. Visual check by the maintainer was pending.
+- Quiet Plasma defaults (ADR 0006): no splash, overview/system bell/zoom effects off, kaccess bell off. Visual check by the maintainer pending.
 
 ## Flatpak
 - Flathub only (static remote in `/usr/share/flatpak/remotes.d/`), system-wide. No Fedora Flatpak repo.
@@ -94,7 +95,7 @@ FROM quay.io/fedora/fedora-bootc:${FEDORA_MAJOR}
 - No audio server by default. Audio is a documented command (layering `pipewire wireplumber pipewire-pulseaudio plasma-pa` with `rpm-ostree`, after removing them from the blacklist for that machine). No `ujust`.
 
 ## Updates (transparent, no automatic reboot)
-- System and Flatpak: Discover unattended updates, on by default, daily (ADR 0008: `PlasmaDiscoverUpdates` with `UseUnattendedUpdates=true`, plus `fedora-release-ostree-desktop` for the polkit rule). It stages the new image; it never reboots.
+- System and Flatpak: Discover unattended updates, on by default, daily (Kyanite ADR 0008: `PlasmaDiscoverUpdates` with `UseUnattendedUpdates=true`, plus `fedora-release-ostree-desktop` for the polkit rule). It stages the new image; it never reboots.
 - A new image applies at the next reboot. User sees a notification, not a forced reboot. `bootc-fetch-apply-updates.timer` stays disabled (it reboots without asking).
 - Accepted limits (inherited from Kinoite): nothing happens without an open session; no "on AC power" check; Discover shows no reboot notification once unattended updates are on. Check in step 4 whether a small reboot reminder is needed.
 - Rollback: `bootc rollback` / boot menu; `bootc switch` to a previous digest. `/etc` is not carried over by a rollback (by design). Do not leave an auto-update timer that undoes a rollback.
@@ -134,8 +135,8 @@ FROM quay.io/fedora/fedora-bootc:${FEDORA_MAJOR}
 - GitHub runners and KVM: Kyanite's design assumed `bcvk` runs on GitHub Actions; confirm it does in step 5 (to verify). If not, boot the test on a self-hosted runner or the NUC.
 
 ## Reuse from the Kyanite archive
-- Keep (adapt): `Containerfile`, `build/packages.sh`, `whitelist.txt`/`blacklist.txt` (trimmed), `tools/rebuild-vm.sh`, `tools/vmssh`, `tests/Containerfile`, `system/usr/share/flatpak/remotes.d/flathub.flatpakrepo`, the Discover update default, systemd preset (reviewed), ADRs 0001, 0002, 0005, 0008, 0010, 0012, 0014, 0015, 0016 as references.
-- Drop: Kyanite name, logo and icons, `kyanite-*` scripts and paths, and all Plasma Setup compatibility hacks (look-and-feel copies, wallpaper symlinks, `kcm-about-distrorc` rewrite, `no-launchers.js`, `kyanite-plasma-setup` tmpfiles) now that Fedora branding is kept; `ujust`, `usbguard`, the `plasma-kaccess` override, ADR 0011 (name/registry/signing). Keep them in the archive: they are the fallback if Fedora objects.
+- Keep (adapt): `Containerfile`, `build/packages.sh`, `whitelist.txt`/`blacklist.txt` (trimmed), `tools/rebuild-vm.sh`, `tools/vmssh`, `tests/Containerfile`, `system/usr/share/flatpak/remotes.d/flathub.flatpakrepo`, the Discover update default, systemd preset (reviewed), Kyanite ADRs 0001, 0002, 0005, 0008, 0010, 0012, 0014, 0015, 0016 as references.
+- Drop: Kyanite name, logo and icons, `kyanite-*` scripts and paths, and all Plasma Setup compatibility hacks (look-and-feel copies, wallpaper symlinks, `kcm-about-distrorc` rewrite, `no-launchers.js`, `kyanite-plasma-setup` tmpfiles) now that Fedora branding is kept; `ujust`, `usbguard`, the `plasma-kaccess` override, Kyanite ADR 0011 (name/registry/signing). Keep them in the archive: they are the fallback if Fedora objects.
 - Check: `docs/environment.md` and `docs/troubleshooting.md` (CI pitfalls) before step 5.
 
 ## Machines

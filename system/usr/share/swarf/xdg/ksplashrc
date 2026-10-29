@@ -1,0 +1,4 @@
+# No splash screen: startplasma starts ksplashqml only when Engine is KSplashQML (docs/adr/0006).
+[KSplash]
+Engine=none
+Theme=None

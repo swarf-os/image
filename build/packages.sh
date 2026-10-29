@@ -54,3 +54,8 @@ fi
 # (the cache stays only when it is a volume mounted by a local build).
 rm -rf /var/log/dnf5.log* /var/lib/dnf
 mountpoint -q /var/cache/libdnf5 || dnf clean all
+
+# bootc container lint: nothing in /run (tmpfiles recreate /run/plasmalogin at boot),
+# and caches that regenerate are not part of the image (docs/adr/0008).
+rm -rf /run/dnf /run/plasmalogin /run/selinux-policy
+rm -rf /var/cache/libX11 /var/cache/ldconfig /var/cache/swcatalog /var/lib/authselect/checksum

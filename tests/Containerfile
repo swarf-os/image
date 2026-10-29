@@ -3,4 +3,5 @@
 ARG BASE=localhost/swarf-os:dev
 FROM ${BASE}
 RUN dnf -y --setopt=install_weak_deps=False install openssh-server && dnf clean all && \
-    systemctl enable sshd.service
+    systemctl enable sshd.service && \
+    firewall-offline-cmd --zone=swarf --add-service=ssh

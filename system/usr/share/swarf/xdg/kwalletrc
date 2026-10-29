@@ -1,0 +1,6 @@
+# KWallet off (docs/adr/0005): kwalletd6 and ksecretd (org.freedesktop.secrets) exit at start.
+[Wallet]
+Enabled=false
+
+[KSecretD]
+Enabled=false
