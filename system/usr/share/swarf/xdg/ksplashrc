@@ -1,4 +1,6 @@
 # No splash screen: startplasma starts ksplashqml only when Engine is KSplashQML (docs/adr/0006).
+# The keys are immutable ([$i]): Plasma writes ~/.config/kdedefaults/ksplashrc at first login
+# (Engine=KSplashQML), and that directory comes first in XDG_CONFIG_DIRS.
 [KSplash]
-Engine=none
-Theme=None
+Engine[$i]=none
+Theme[$i]=None
