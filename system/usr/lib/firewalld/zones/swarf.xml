@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zone>
+  <short>swarf</short>
+  <description>Everything closed except what a desktop needs to get an address and resolve .local names. No ssh.</description>
+  <service name="dhcpv6-client"/>
+  <service name="mdns"/>
+</zone>

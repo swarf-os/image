@@ -22,3 +22,18 @@ systemctl disable \
 # kio-extras -> kf6-kdnssd -> nss-mdns). Masked rather than force-removed.
 systemctl disable avahi-daemon.service avahi-daemon.socket
 systemctl mask geoclue.service avahi-daemon.service avahi-daemon.socket
+
+# Core dumps are off (sysctl kernel.core_pattern, docs/adr/0003). The socket is static,
+# so a preset cannot turn it off.
+systemctl mask systemd-coredump.socket
+
+# Firewall: closed default zone shipped in system/ (docs/adr/0007).
+firewall-offline-cmd --set-default-zone=swarf
+
+# os-release: stay ID=fedora, mark the image as custom (docs/adr/0008).
+# Owned by fedora-release-identity-basic; replace the line if it exists.
+if grep -q '^VARIANT_ID=' /usr/lib/os-release; then
+    sed -i 's/^VARIANT_ID=.*/VARIANT_ID=custom/' /usr/lib/os-release
+else
+    echo 'VARIANT_ID=custom' >>/usr/lib/os-release
+fi

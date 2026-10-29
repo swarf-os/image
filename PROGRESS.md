@@ -4,7 +4,7 @@ Steps come from `SPEC.md` (section "Steps").
 
 - [x] 1. Repo set up with the free licence, `SECURITY.md` and private vulnerability reporting; import and trim the Kyanite recipe (no branding code); minimal whitelist; `podman build` passes `bootc container lint`; the VM boots on Plasma with Secure Boot.
 - [x] 2. Package lists: final whitelist and blacklist; decide the KDE apps and locales one by one; confirm hard dependencies in the image (`rpm -q --whatrequires`).
-- [ ] 3. Config: telemetry off, services, firewall, KWallet off, quiet defaults.
+- [x] 3. Config: telemetry off, services, firewall, KWallet off, quiet defaults.
 - [ ] 4. Update behaviour: Discover updates Flatpak and system, staged, no password, no reboot; decide the reboot reminder.
 - [ ] 5. CI: daily build, manifest check, boot test, `:testing` → `:stable`, issue on failure.
 - [ ] 6. ISO: Titanoboa, Anaconda WebUI, LUKS, keymap check, Flatpaks embedded and installed offline, Plasma Setup at first boot; install from USB on the NUC and the Framework.
@@ -29,3 +29,10 @@ Steps come from `SPEC.md` (section "Steps").
   - VM `swarf-dev` rebuilt: Secure Boot enabled, `plasmalogin.service` active, `systemctl --failed` empty, screen shows Plasma Setup with the Fedora look. All ~200 whitelist names are installed (`rpm -q` reports none missing).
   - Hard dependencies confirmed in the VM (`rpm -e --test`): `geoclue2` ← `xdg-desktop-portal`; `avahi` ← `nss-mdns` ← `kf6-kdnssd`; `kf6-kwallet-libs` ← `kf6-kio-core`, `plasma-workspace-libs`, `kaccounts-integration-qt6`, `libksane`, and it pulls the `kf6-kwallet` daemon package. No `kwalletmanager5`, `pam-kwallet`, `kde-connect` or `nfs-utils` present.
   - Open for later: whether Waterfox from Flathub plays H.264 (step 6); a full rebuild plus VM takes about 30 minutes now.
+- Session 3 : step 3 done (see `docs/adr/0003` to `0008`).
+  - Decisions: hardening limited to core dumps off + kernel/network sysctl + random Wi-Fi MAC/GHNS off (0003); telemetry off (0004); both KWallet daemons off, packages kept (0005); quiet Plasma defaults: no splash, Overview, system bell and Zoom off (0006); firewalld zone `swarf` (dhcpv6-client + mdns, no ssh) (0007); services, `VARIANT_ID=custom`, lint cleanup (0008).
+  - `bootc container lint`: 14 passed, 1 skipped, 0 warnings (the 2 old warnings are gone).
+  - VM `swarf-dev` rebuilt; `tests/check-config.sh` (run with `tools/vmssh 'bash -s' < tests/check-config.sh`) prints OK: sysctl, services, firewall zone, `authselect check`, no failed unit, XDG keys read with `kreadconfig6`.
+  - NOT verified: the XDG defaults (KWallet, splash, KWin effects, KUserFeedback) only act in a real logged-in Plasma session; the maintainer must check them visually after first login.
+  - Deferred to step 4: Discover ODRS reviews (no setting to disable them in Discover 6.7.5, see `docs/adr/0004-telemetry-off.md`).
+  - Disclosed choice: `VARIANT_ID=custom` in os-release.

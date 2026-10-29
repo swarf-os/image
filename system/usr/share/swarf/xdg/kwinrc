@@ -1,0 +1,5 @@
+# Overview, system bell and zoom effects off (docs/adr/0006). Shake cursor stays on.
+[Plugins]
+overviewEnabled=false
+systembellEnabled=false
+zoomEnabled=false
