@@ -51,5 +51,12 @@ check "kdeglobals ghns" false "$(rd kdeglobals 'KDE Action Restrictions' ghns)"
 check "kdeglobals look and feel (Fedora's, untouched)" org.fedoraproject.fedora.desktop "$(rd kdeglobals KDE LookAndFeelPackage)"
 check "UserFeedback.conf" false "$(grep -h '^Enabled=' /usr/share/swarf/xdg/KDE/UserFeedback.conf | cut -d= -f2)"
 
+check "bootc-fetch-apply-updates.timer" disabled "$(systemctl is-enabled bootc-fetch-apply-updates.timer 2>&1)"
+check "rpm-ostreed-automatic.timer" disabled "$(systemctl is-enabled rpm-ostreed-automatic.timer 2>&1)"
+check "polkit rule rpm-ostree upgrade" 1 "$(grep -c 'rpmostree1.upgrade' /usr/share/polkit-1/rules.d/org.projectatomic.rpmostree1.rules)"
+check "Discover unattended" true "$(rd PlasmaDiscoverUpdates Global UseUnattendedUpdates)"
+check "Discover interval" 86400 "$(rd PlasmaDiscoverUpdates Global RequiredNotificationInterval)"
+check "odrs.gnome.org blocked" 0.0.0.0 "$(getent ahostsv4 odrs.gnome.org | awk 'NR==1{print $1}')"
+
 [ "$fail" = 0 ] && echo OK || echo FAILED
 exit "$fail"

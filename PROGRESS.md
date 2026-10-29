@@ -5,7 +5,7 @@ Steps come from `SPEC.md` (section "Steps").
 - [x] 1. Repo set up with the free licence, `SECURITY.md` and private vulnerability reporting; import and trim the Kyanite recipe (no branding code); minimal whitelist; `podman build` passes `bootc container lint`; the VM boots on Plasma with Secure Boot.
 - [x] 2. Package lists: final whitelist and blacklist; decide the KDE apps and locales one by one; confirm hard dependencies in the image (`rpm -q --whatrequires`).
 - [x] 3. Config: telemetry off, services, firewall, KWallet off, quiet defaults.
-- [ ] 4. Update behaviour: Discover updates Flatpak and system, staged, no password, no reboot; decide the reboot reminder.
+- [x] 4. Update behaviour: Discover updates Flatpak and system, staged, no password, no reboot; decide the reboot reminder.
 - [ ] 5. CI: daily build, manifest check, boot test, `:testing` → `:stable`, issue on failure.
 - [ ] 6. ISO: Titanoboa, Anaconda WebUI, LUKS, keymap check, Flatpaks embedded and installed offline, Plasma Setup at first boot; install from USB on the NUC and the Framework.
 - [ ] 7. Cloudflare: R2 bucket, Worker, download page with the visual password, upload from CI.
@@ -36,3 +36,9 @@ Steps come from `SPEC.md` (section "Steps").
   - NOT verified: the XDG defaults (KWallet, splash, KWin effects, KUserFeedback) only act in a real logged-in Plasma session; the maintainer must check them visually after first login.
   - Deferred to step 4: Discover ODRS reviews (no setting to disable them in Discover 6.7.5, see `docs/adr/0004-telemetry-off.md`).
   - Disclosed choice: `VARIANT_ID=custom` in os-release.
+- Session 4 : step 4 done (see `docs/adr/0009` to `0011`).
+  - Discover unattended updates on, daily, via `/usr/share/swarf/xdg/PlasmaDiscoverUpdates` (Discover 6.7.5 defaults to off; this image has no Kinoite file). No password: polkit rule from `fedora-release-ostree-desktop` (rpm-ostree) and `pkaction` `implicit active: yes` for Flatpak app/runtime update. `bootc-fetch-apply-updates.timer` and `rpm-ostreed-automatic.timer` stay disabled (0009).
+  - ODRS reviews: no setting exists, so `odrs.gnome.org` is blocked in `/etc/hosts` (`system/etc/hosts`, 0010). Discover shows no ratings.
+  - Reboot reminder: none, maintainer decision (0011). Discover's notifier shows no reboot notice when unattended updates are on.
+  - VM `swarf-dev` rebuilt; `tests/check-config.sh` prints OK, including the new checks (keys, timers, polkit rule, hosts block). `bootc container lint`: 14 passed, 1 skipped, 0 warnings.
+  - NOT verified: a real unattended run (needs a newer image in a registry and a logged-in session; steps 5 and 8), what the panel icon shows once an update is staged, and that Discover copes quietly with the blocked ODRS host. The visual check of the step 3 XDG settings remains the maintainer's.
