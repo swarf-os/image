@@ -24,4 +24,5 @@ publish; fork pull requests do not run (no KVM, no secrets).
 `workflow_dispatch` and `schedule` only run from the default branch, and pull request runs
 skip every publishing step. So login to GHCR, push, cosign, attestations, SBOM, promotion,
 the drift pull request, the issue and the retention script have not been exercised in CI.
+The same goes for the `gh workflow enable` step (ADR 0017), which runs on `schedule` only.
 The first run on `main` is that test; a failure opens the `drift` issue.

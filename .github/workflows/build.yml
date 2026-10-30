@@ -126,6 +126,7 @@ jobs:
 
       - name: Keep the schedule enabled (ADR 0017)
         if: github.event_name == 'schedule' && success()
+        continue-on-error: true
         run: gh workflow enable build.yml
 
       - name: Retention
