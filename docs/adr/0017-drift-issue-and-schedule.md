@@ -10,15 +10,27 @@ Date: 2026-10-29. Status: accepted.
 - Pull request runs never publish and never open the issue.
 
 ## The 60-day rule
-GitHub docs (events-that-trigger-workflows, read 2026-10-30): "In a public repository, scheduled
-workflows are automatically disabled when no repository activity has occurred in 60 days."
-The docs do not define "repository activity" and do not say whether scheduled runs, drift or
-Dependabot pull requests count; nothing here relies on any of them. A disabled schedule opens no
-issue (an absent run is not a failure).
+GitHub docs (events-that-trigger-workflows, read 2026-10-30; the page has no date):
+"In a public repository, scheduled workflows are automatically disabled when no repository
+activity has occurred in 60 days." Checked: the page says nothing about private repositories
+for this rule, so it is documented for public ones only (not proven absent for private ones).
+The docs do not define "repository activity". A disabled schedule opens no issue (an absent
+run is not a failure). `workflow_dispatch` and `push` are not affected.
 
-Mitigation, cheap and unproven: each successful scheduled run ends with `gh workflow enable
-build.yml` (needs `actions: write`). Third-party projects report that this resets the
-inactivity timer; GitHub does not document it. Stronger option, not done (needs a token on the
-NUC): a systemd timer on the NUC runs `gh workflow run build.yml` when the last run is older
-than two days; a manual dispatch is not subject to the rule. Check by hand now and then: the
-Actions tab shows "disabled due to inactivity"; `gh workflow enable build.yml` fixes it.
+Measures:
+1. Each successful scheduled run ends with `gh workflow enable build.yml` (`actions: write`,
+   `continue-on-error`). Free.
+2. A private guardian repository (`swarf-os/guardian`) runs a daily workflow with a
+   fine-grained token (secret `IMAGE_TOKEN`, Actions read/write on `swarf-os/image` only):
+   it enables `build.yml` and fails if the last successful run on `main` is older than 48 h
+   or if the token stops working. The failed run is the alert.
+3. Rejected: a timer on a NUC (needs a machine that stays on); a shared token in the image
+   (the image and repository are public, anyone could read it).
+
+## Not proven
+- That `gh workflow enable` resets the inactivity counter. Only third-party tools claim it
+  (gh-workflow-immortality); GitHub does not document it. Whether commits, runs or
+  Dependabot pull requests count as "activity" is also undocumented.
+- That the private guardian's own schedule is exempt from the rule (documented for public
+  repositories only).
+- The token expires within a year at most and must be renewed by hand.
