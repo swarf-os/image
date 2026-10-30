@@ -22,3 +22,9 @@ The repository setting "Allow GitHub Actions to create and approve pull requests
 step fails and opens the issue. Pull requests made with `GITHUB_TOKEN` do not start workflows,
 which this design does not need. After a merge the push to `main` starts a normal run, which may
 promote a newer digest with the same manifest.
+
+## Stale runs (seen 2026-10-30)
+Runs on `main` are serialised, so a run can still be building an older commit when a newer
+merge lands. Such a run opened drift PR #12 after #11 had fixed the manifest, and the PR
+conflicted. `tools/drift-pr.sh` now opens nothing when `origin/main` is no longer the run's
+`GITHUB_SHA`; the newer run, queued behind it, decides.

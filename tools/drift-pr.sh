@@ -12,6 +12,13 @@ branch=manifest-drift
 cd "$R"
 git config user.name "swarf-os CI"
 git config user.email "noreply@github.com"
+git fetch -q origin main
+# Runs are queued: this one may have built a commit that main has already moved past. A
+# newer run is queued behind it and will detect the drift again, so open nothing here.
+if [ -n "${GITHUB_SHA:-}" ] && [ "$(git rev-parse origin/main)" != "$GITHUB_SHA" ]; then
+    echo "main moved since this run started: no drift pull request (a newer run decides)"
+    exit 0
+fi
 git checkout -B "$branch" origin/main 2>/dev/null || git checkout -B "$branch"
 cp "$WORK"/manifest-new/{packages,units,repos,version}.txt manifest/
 cp "$WORK/manifest-new/info.txt" manifest/info.txt
