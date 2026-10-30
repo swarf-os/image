@@ -1250,4 +1250,3 @@ zram-generator.x86_64
 zstd.x86_64
 zvbi.x86_64
 zxing-cpp.x86_64
-zz-drift-test.noarch
