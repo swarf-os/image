@@ -91,6 +91,18 @@ jobs:
           output-file: sbom.spdx.json
           upload-artifact: false
 
+      - name: Slim the SBOM (rpm packages only, no file list; the attestation limit is 16 MiB)
+        if: env.PUBLISH == 'true'
+        run: |
+          jq -c '
+            ([.packages[] | select(any(.externalRefs[]?; .referenceType == "purl" and (.referenceLocator | startswith("pkg:rpm/")))) | .SPDXID]) as $keep
+            | del(.files)
+            | .packages |= map(select(.SPDXID as $i | $keep | index($i)))
+            | .relationships |= map(select(.relationshipType == "DESCRIBES" or ((.spdxElementId as $a | .relatedSpdxElement as $b | ($keep | index($a)) and ($keep | index($b))))))
+          ' sbom.spdx.json >sbom.slim.json
+          mv sbom.slim.json sbom.spdx.json
+          ls -l sbom.spdx.json
+
       - uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
         if: env.PUBLISH == 'true'
         with:

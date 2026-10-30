@@ -26,3 +26,10 @@ skip every publishing step. So login to GHCR, push, cosign, attestations, SBOM, 
 the drift pull request, the issue and the retention script have not been exercised in CI.
 The same goes for the `gh workflow enable` step (ADR 0017), which runs on `schedule` only.
 The first run on `main` is that test; a failure opens the `drift` issue.
+
+## SBOM size (first run on `main`, 2026-10-30)
+`actions/attest` refuses an SBOM above 16 MiB. The syft SPDX output of the image was 79 MB
+(93k files, 6.6k packages, 122k relationships). A `jq` step keeps the rpm packages and the
+relationships between them and drops the file list: 3.4 MB on the local image. The SBOM
+therefore lists packages, not files. Measured locally on `dir:` scan, not yet on the registry
+scan used in CI.
