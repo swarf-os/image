@@ -31,6 +31,7 @@ jobs:
       attestations: write
       pull-requests: write
       issues: write
+      actions: write
     env:
       PUBLISH: ${{ github.event_name != 'pull_request' }}
       GH_TOKEN: ${{ github.token }}
@@ -122,6 +123,10 @@ jobs:
           log=$WORK/boot-test.log
           [ -s "$log" ] || log=$WORK/build.log
           tools/drift-issue.sh fail "The daily pipeline failed; :stable stays on the previous image." "$log"
+
+      - name: Keep the schedule enabled (ADR 0017)
+        if: github.event_name == 'schedule' && success()
+        run: gh workflow enable build.yml
 
       - name: Retention
         if: github.event_name == 'schedule' && success()
