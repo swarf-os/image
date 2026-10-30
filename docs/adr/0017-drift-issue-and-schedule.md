@@ -21,7 +21,7 @@ Measures:
 1. Each successful scheduled run ends with `gh workflow enable build.yml` (`actions: write`,
    `continue-on-error`). Free.
 2. A private guardian repository (`swarf-os/guardian`) runs a daily workflow with a
-   fine-grained token (secret `IMAGE_TOKEN`, Actions read/write on `swarf-os/image` only):
+   GitHub App installation token (secrets `APP_CLIENT_ID` and `APP_PRIVATE_KEY`, Actions read/write on `swarf-os/image` only; a personal access token would expire within 366 days, the organisation limit):
    it enables `build.yml` and fails if the last successful run on `main` is older than 48 h
    or if the token stops working. The failed run is the alert.
 3. Rejected: a timer on a NUC (needs a machine that stays on); a shared token in the image
@@ -33,4 +33,4 @@ Measures:
   Dependabot pull requests count as "activity" is also undocumented.
 - That the private guardian's own schedule is exempt from the rule (documented for public
   repositories only).
-- The token expires within a year at most and must be renewed by hand.
+- The App private key must stay secret; revoke it in the App settings if it leaks.
