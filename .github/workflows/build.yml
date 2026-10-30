@@ -33,7 +33,7 @@ jobs:
       issues: write
     env:
       PUBLISH: ${{ github.event_name != 'pull_request' }}
-      WORK: ${{ github.workspace }}/../work/ci
+      WORK: ${{ runner.temp }}/ci
       GH_TOKEN: ${{ github.token }}
       GITHUB_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:

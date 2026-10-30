@@ -29,7 +29,8 @@ curl -fsSL -o /tmp/bcvk.tar.gz \
     "https://github.com/bootc-dev/bcvk/releases/download/v$BCVK_VERSION/bcvk-x86_64-unknown-linux-gnu.tar.gz"
 echo "$BCVK_SHA256  /tmp/bcvk.tar.gz" | sha256sum -c -
 tar -xzf /tmp/bcvk.tar.gz -C ~/bin
-chmod +x ~/bin/bcvk*
+mv ~/bin/bcvk-x86_64-unknown-linux-gnu ~/bin/bcvk
+chmod +x ~/bin/bcvk
 echo "$HOME/bin" >>"$GITHUB_PATH"
 podman --version
 df -h / /mnt
