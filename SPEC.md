@@ -1,7 +1,8 @@
 # SPEC — swarf-os, a personal Fedora bootc image (Plasma, minimal)
 
-Draft 11 · 2026-10-29 · names decided (`swarf-os`). Fedora bootc path; the Arch version is kept as `claude/SPEC-arch-backup.md` in the planning project (fallback if this path becomes too hard). Kyanite archive (read for draft 8): `fbmguerin/archive-kyanite-os-fedora-custom`.
+Draft 12 · 2026-10-29 · names decided (`swarf-os`). Fedora bootc path; the Arch version is kept as `claude/SPEC-arch-backup.md` in the planning project (fallback if this path becomes too hard). Kyanite archive (read for draft 8): `fbmguerin/archive-kyanite-os-fedora-custom`.
 Sources: the Kyanite ADRs, Containerfile, lists and roadmap (read 2026-10-29), plus two Arch/distro comparison reports. Items marked (to verify) were not checked against a primary source in this draft.
+Draft 12 (2026-10-29, step 5): CI decided (ADR 0013 to 0017): public GHCR image, base `fedora-bootc:latest` with a pull request on any manifest change including `VERSION_ID`, manifest gate without versions or digests.
 Draft 11 (2026-10-29, step 3): settings decided (ADR 0003 to 0008); firewall is a closed `swarf` zone, not Fedora's `public`; Discover reviews (ODRS) deferred to step 4.
 Draft 10 (2026-10-29, step 2): KDE apps, locales and fonts decided (ADR 0002); the 155 `hunspell-*` and all glibc locales are kept after all.
 Draft 9 changes: project, organization, repository, image and ISO names fixed; contact and security section added; name availability check still pending.
@@ -58,8 +59,8 @@ Draft 8 changes: Fedora logos kept knowingly, free licence, README wording decid
 
 ## Build model
 ```
-ARG FEDORA_MAJOR=N
-FROM quay.io/fedora/fedora-bootc:${FEDORA_MAJOR}
+ARG BASE=quay.io/fedora/fedora-bootc:latest
+FROM ${BASE}
 ```
 1. In one layer: remove blacklisted base packages, install the whitelist with `install_weak_deps=False`, fail if anything blacklisted (packages or repos) is still present. The image keeps no trace of what was removed.
 2. Copy `system/` (config files owned by the project).
@@ -99,7 +100,7 @@ FROM quay.io/fedora/fedora-bootc:${FEDORA_MAJOR}
 - A new image applies at the next reboot. User sees a notification, not a forced reboot. `bootc-fetch-apply-updates.timer` stays disabled (it reboots without asking).
 - Accepted limits (inherited from Kinoite): nothing happens without an open session; no "on AC power" check; Discover shows no reboot notification once unattended updates are on. Check in step 4 whether a small reboot reminder is needed.
 - Rollback: `bootc rollback` / boot menu; `bootc switch` to a previous digest. `/etc` is not carried over by a rollback (by design). Do not leave an auto-update timer that undoes a rollback.
-- Fedora major version: follows the latest Fedora, never skipping one. Mechanism: see Open questions.
+- Fedora major version: follows `fedora-bootc:latest`; a new major version reaches `:stable` only through a merged pull request (CI step 8, ADR 0014).
 - Firmware: through Discover/fwupd.
 
 ## Secure Boot, disk, encryption
@@ -119,7 +120,7 @@ FROM quay.io/fedora/fedora-bootc:${FEDORA_MAJOR}
 - The ISO file lives in **Cloudflare R2** (a Worker or Pages static asset is limited to a small file size, far below an ISO; to verify exact limits). A **Worker** serves the download page and the download link. Keep the last two ISOs. Upload from CI (multipart upload for multi-GB files).
 - The download page asks for a password. **Visual only**: it keeps casual visitors out, it is not security. The ISO URL itself must not be treated as secret; nothing sensitive may ever be in the image.
 - Consequence: the ISO is effectively public. Fedora trademark exposure is accepted (see Identity); the fallback there is ready if Fedora objects.
-- The image on GHCR stays the update source for machines (read-only token or public, to decide).
+- The image on GHCR stays the update source for machines; public, no token (ADR 0013).
 
 ## CI (daily, gated)
 1. Build one image a day, tag `:testing`.
@@ -129,10 +130,10 @@ FROM quay.io/fedora/fedora-bootc:${FEDORA_MAJOR}
 5. Everything passes → `:stable` is the same digest as the tested `:testing` (retag, never rebuild).
 6. A failure keeps `:stable` on the previous image and opens/updates a GitHub issue (`drift`) readable by the agent.
 7. Packages or services added/removed → `:testing` is published, `:stable` waits for an automatic pull request with the diff.
-8. Fedora version bump: scheduled job, pull request when `fedora-bootc:N+1` is a final release.
+8. Fedora version bump: no separate job. `latest` moves, `VERSION_ID` changes in the manifest, so rule 7 holds `:stable` and opens the pull request (ADR 0014).
 9. Retention of old tags; actions pinned by SHA + Dependabot.
 - Logic lives in `tools/` scripts; CI YAML only calls them (Forgejo later).
-- GitHub runners and KVM: Kyanite's design assumed `bcvk` runs on GitHub Actions; confirm it does in step 5 (to verify). If not, boot the test on a self-hosted runner or the NUC.
+- GitHub runners and KVM: see ADR 0018 for what the first run showed.
 
 ## Reuse from the Kyanite archive
 - Keep (adapt): `Containerfile`, `build/packages.sh`, `whitelist.txt`/`blacklist.txt` (trimmed), `tools/rebuild-vm.sh`, `tools/vmssh`, `tests/Containerfile`, `system/usr/share/flatpak/remotes.d/flathub.flatpakrepo`, the Discover update default, systemd preset (reviewed), Kyanite ADRs 0001, 0002, 0005, 0008, 0010, 0012, 0014, 0015, 0016 as references.
@@ -166,9 +167,8 @@ FROM quay.io/fedora/fedora-bootc:${FEDORA_MAJOR}
 
 ## Open questions
 - Availability of `swarf-os` (GHCR package, search engines, trademark registers). If it fails, only the ISO prefix and the image name change; the organization can be renamed.
-- Fedora version policy: pinned `FEDORA_MAJOR` + automatic bump pull request (Kyanite ADR 0001), or `:latest`. Also check whether F45 is final (it was NO-GO on 2026-10-15, target 2026-10-27, fallback 2026-11-03) before choosing the start version.
+- (closed, step 5, ADR 0014: follow `latest`, pull request on change.)
 - Licence: MIT or Apache-2.0.
 - (closed, step 4, ADR 0011: no reminder.)
-- GHCR image public or private with a read-only token on machines.
-- Actions minutes and KVM on the chosen CI.
+- (closed, step 5, ADR 0013: GHCR image public.)
 - `SHA256SUMS` signing identity: keyless or dedicated key.
