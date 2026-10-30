@@ -33,7 +33,6 @@ jobs:
       issues: write
     env:
       PUBLISH: ${{ github.event_name != 'pull_request' }}
-      WORK: ${{ runner.temp }}/ci
       GH_TOKEN: ${{ github.token }}
       GITHUB_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
@@ -42,7 +41,9 @@ jobs:
           fetch-depth: 0
 
       - name: Prepare the runner
-        run: tools/ci-runner-setup.sh
+        run: |
+          echo "WORK=$RUNNER_TEMP/ci" >>"$GITHUB_ENV"
+          tools/ci-runner-setup.sh
 
       - name: Build
         run: tools/ci-build.sh localhost/swarf-os:ci
@@ -131,6 +132,6 @@ jobs:
         with:
           name: logs
           path: |
-            ${{ env.WORK }}/*.log
-            ${{ env.WORK }}/manifest-diff.txt
+            ${{ runner.temp }}/ci/*.log
+            ${{ runner.temp }}/ci/manifest-diff.txt
           if-no-files-found: ignore
