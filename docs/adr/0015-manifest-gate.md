@@ -23,3 +23,8 @@ issuer `OU=Fedora Secure Boot CA 20200709`, `crypt` listed).
 A blocking failure stops everything and opens the issue (ADR 0017). A manifest difference alone
 publishes `:testing` and holds `:stable` (ADR 0016). `manifest/` is never edited by hand: only
 `tools/drift-pr.sh` rewrites it, in the drift pull request.
+
+The boot test (`tools/boot-test.sh`) compares the booted VM's units with the static listing of
+the same image, not with `manifest/`: it proves runtime matches what was built, while the
+manifest gate alone compares with the committed manifest. Otherwise a unit change would fail the
+boot test and the drift pull request would never be opened.

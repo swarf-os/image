@@ -14,9 +14,13 @@ mkdir -p "$WORK"
 log=$WORK/boot-test.log
 : >"$log"
 
+# Expected units: the static listing of this very image, not the committed manifest/ (a manifest
+# change is the drift pull request's business, tools/manifest-check.sh; here the booted system
+# must match what was built).
+BASE_DIGEST=none "$R/tools/manifest.sh" "$image" "$WORK/boot-manifest"
 podman build --build-arg "BASE=$image" -t localhost/swarf-os:test "$R/tests" >>"$log" 2>&1
 payload=$(
-    echo "export EXPECTED_UNITS=$(base64 -w0 "$R/manifest/units.txt")"
+    echo "export EXPECTED_UNITS=$(base64 -w0 "$WORK/boot-manifest/units.txt")"
     echo 'export LANG=C.UTF-8'
     echo 'rc=0'
     cat "$R/tests/check-config.sh" | sed 's/^exit "\$fail"$/[ "$fail" = 0 ] || rc=1/'
