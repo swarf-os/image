@@ -3,7 +3,7 @@
 #  - free the system disk and keep container storage on /mnt (the image is ~5.4 GB and the
 #    build needs several times that),
 #  - open /dev/kvm to the runner user (udev rule from Kyanite docs/troubleshooting.md),
-#  - install sbverify and bcvk (pinned by sha256).
+#  - install sbverify, virtiofsd and qemu (bcvk runs the VM with the host's), and bcvk (pinned by sha256).
 # Prints the KVM and disk state so that the log shows why a boot test cannot start.
 set -euo pipefail
 BCVK_VERSION=0.22.0
@@ -22,7 +22,7 @@ sudo udevadm trigger --name-match=kvm
 ls -l /dev/kvm || { echo "ERROR: no /dev/kvm on this runner" >&2; exit 1; }
 
 sudo apt-get update -qq
-sudo apt-get install -y -qq sbsigntool
+sudo apt-get install -y -qq sbsigntool virtiofsd qemu-system-x86
 
 mkdir -p ~/bin
 curl -fsSL -o /tmp/bcvk.tar.gz \
