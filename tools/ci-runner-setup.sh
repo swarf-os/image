@@ -1,5 +1,5 @@
 #!/bin/bash
-# Prepare a GitHub ubuntu-24.04 runner for the build and the boot test (not for local use).
+# Prepare a GitHub ubuntu-26.04 runner for the build and the boot test (not for local use).
 #  - free the system disk and keep container storage on /mnt (the image is ~5.4 GB and the
 #    build needs several times that),
 #  - open /dev/kvm to the runner user (udev rule from Kyanite docs/troubleshooting.md),
