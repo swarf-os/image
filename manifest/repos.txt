@@ -1,0 +1,5 @@
+fedora-cisco-openh264.repo
+fedora-updates-archive.repo
+fedora-updates-testing.repo
+fedora-updates.repo
+fedora.repo

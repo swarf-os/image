@@ -1,0 +1,30 @@
+name: promote
+
+# Merging the drift pull request (branch manifest-drift) means the maintainer reviewed the
+# change: :stable then points at the digest recorded in manifest/tested-digest, no rebuild.
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  promote:
+    if: >-
+      github.event.pull_request.merged &&
+      github.event.pull_request.head.ref == 'manifest-drift' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+      - name: Log in to GHCR
+        run: echo "${{ github.token }}" | podman login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+      - name: Retag the tested digest as :stable
+        run: tools/promote.sh "$(cat manifest/tested-digest)"

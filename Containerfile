@@ -1,5 +1,5 @@
-ARG FEDORA_MAJOR=44
-FROM quay.io/fedora/fedora-bootc:${FEDORA_MAJOR}
+ARG BASE=quay.io/fedora/fedora-bootc:latest
+FROM ${BASE}
 
 COPY whitelist.txt blacklist.txt /tmp/swarf/
 COPY build/ /tmp/swarf/build/
