@@ -3,13 +3,13 @@
 Date: 2026-10-30. Status: accepted.
 
 ## Decision
-The kickstart sets no `lang` or `keyboard`. The installer starts in English with a US keyboard
+The kickstart sets no `lang` or `keyboard`. The installer starts in English with a US keyboard (geolocation is off, ADR 0026; with it on, the IP address picked French)
 and the user changes them in the WebUI if needed (the LUKS passphrase field has its own keyboard
 selector). Plasma Setup asks for the language again at first boot.
 
 ## Why
-Less to maintain, no layout of ours to keep in sync. The first VM install forced `fr` through a
-test kickstart: `vconsole.conf` of the installed system then said `KEYMAP=fr` and the
+Less to maintain, no layout of ours to keep in sync. The first VM install showed `fr` (geolocation, ADR 0026; first thought to come from a
+test kickstart): `vconsole.conf` of the installed system then said `KEYMAP=fr` and the
 passphrase typed with a US layout failed once at the LUKS prompt. That test is not a reference.
 
 ## Consequences
