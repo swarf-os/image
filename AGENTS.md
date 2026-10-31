@@ -22,6 +22,7 @@ Personal Fedora bootc image (Plasma, minimal). `SPEC.md` is the source of truth.
 - Every long job writes its own exit file: `(cmd >log 2>&1; echo $? >job.exit)`. Delete `job.exit` before starting. Watchers wait on that file, never on `pgrep` (`pgrep -f` matches the watcher's own command line).
 - Watcher timeout = 2 x the expected duration (ISO build ~30 min, VM install ~35 min, image + VM ~30 min), and it reports both outcomes (done / timed out). No fixed iteration count shorter than the job, no `; true`.
 - Use `LC_ALL=C` for any command whose output a watcher parses (`virsh domstate`, etc.).
+- Before an image or ISO build, check `df -h /var/home` (30 GB free at least) and run `podman image prune -f` (unnamed layers only). A full disk made the ISO build fail at the last step after 35 minutes (2026-10-31).
 - While a job runs, give the maintainer the expected end time (local time) and check it yourself at that time.
 
 ## Launch prompt for the next step
