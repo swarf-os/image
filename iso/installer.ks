@@ -4,7 +4,7 @@ bootc --source-imgref=oci:@PAYLOAD_DIR@ --target-imgref=@TARGET_REF@ --stateroot
 
 # Flatpaks: copy the ones installed in the live system into the new /var (offline, ADR 0021).
 %post --nochroot --erroronfail --log=/tmp/swarf-flatpaks.log
-set -x
+set -ex
 # Anaconda binds the stateroot's var (physical root /ostree/deploy/default/var) onto /mnt/sysroot/var
 # after the bootc deployment; the stateroot path itself is not under /mnt/sysroot.
 var=/mnt/sysroot/var

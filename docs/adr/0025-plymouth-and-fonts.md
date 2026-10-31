@@ -24,3 +24,10 @@ initramfs had Plymouth and the DRM modules, but the command line had `quiet` onl
 selector). `system/usr/lib/bootc/kargs.d/10-quiet.toml` now holds `["rhgb", "quiet"]`, as Fedora
 ships it. Seen on the VM with the manual argument; the image with the file itself is not
 yet seen.
+
+## Live ISO
+
+The live installer's GRUB entries (`iso/build.sh`) had `quiet` but no `rhgb`, so
+the live boot showed console text instead of Plymouth. `rhgb` is added to both
+entries. The live initramfs already carries Plymouth (`plymouth-switch-root`
+seen at boot). Not yet seen on a rebuilt ISO.
