@@ -16,3 +16,11 @@ prints each language in its own script. Step 2 (ADR 0002) had kept only `default
   (the three requirements of `default-fonts`). Supersedes the fonts line of ADR 0002.
 - Not done: the LUKS prompt keyboard still follows the initramfs keymap, not the installer layout
   (ADR 0022).
+
+## Correction (same day): `rhgb`
+With the packages and the rebuilt initramfs, the VM still showed the text LUKS prompt: the
+initramfs had Plymouth and the DRM modules, but the command line had `quiet` only. Adding
+`rhgb` by hand in GRUB gave the graphical prompt (Fedora logo, passphrase field, keyboard
+selector). `system/usr/lib/bootc/kargs.d/10-quiet.toml` now holds `["rhgb", "quiet"]`, as Fedora
+ships it. Seen on the VM with the manual argument; the image with the file itself is not
+yet seen.
