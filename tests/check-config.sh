@@ -50,6 +50,7 @@ check "kaccessrc SystemBell" false "$(rd kaccessrc Bell SystemBell)"
 mkdir -p /tmp/kdedefaults-sim && printf '[KSplash]\nEngine=KSplashQML\n' >/tmp/kdedefaults-sim/ksplashrc
 check "ksplashrc beats kdedefaults" none "$(XDG_CONFIG_DIRS=/tmp/kdedefaults-sim:$XDG_CONFIG_DIRS rd ksplashrc KSplash Engine)"
 check "panel task manager" 1 "$(grep -c 'addWidget("org.kde.plasma.taskmanager")' /usr/share/plasma/layout-templates/org.kde.plasma.desktop.defaultPanel/contents/layout.js)"
+check "panel no pinned launchers" 1 "$(grep -c 'writeConfig("launchers", "")' /usr/share/plasma/layout-templates/org.kde.plasma.desktop.defaultPanel/contents/layout.js)"
 check "kdeglobals ghns" false "$(rd kdeglobals 'KDE Action Restrictions' ghns)"
 check "kdeglobals look and feel (Fedora's, untouched)" org.fedoraproject.fedora.desktop "$(rd kdeglobals KDE LookAndFeelPackage)"
 check "UserFeedback.conf" false "$(grep -h '^Enabled=' /usr/share/swarf/xdg/KDE/UserFeedback.conf | cut -d= -f2)"

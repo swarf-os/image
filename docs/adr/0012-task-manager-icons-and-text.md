@@ -10,8 +10,9 @@ adds `org.kde.plasma.icontasks`, the icons-only widget. The maintainer wants ico
 
 ## Decision
 `build/configure.sh` replaces the widget id in that template (the same mechanism as Kyanite
-and Bazzite), failing the build if the line is not found before or after. Pinned launchers
-are left to the widget's defaults (not decided here, see 0006).
+and Bazzite), failing the build if the line is not found before or after. The same step writes an
+empty `launchers` list into the widget's General group: no pinned apps (maintainer request,
+step 6, the installed system showed pinned launchers).
 Tested live in the VM (`bootc usroverlay`, same `sed`, panel reset): the panel shows
 window titles.
 
