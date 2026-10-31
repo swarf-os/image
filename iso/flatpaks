@@ -1,0 +1,4 @@
+# Flathub application ids embedded in the ISO (checked on flathub.org/api/v2/appstream, 2026-10-30).
+# Their runtimes come along as dependencies.
+net.waterfox.waterfox
+org.videolan.VLC

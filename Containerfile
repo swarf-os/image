@@ -13,4 +13,7 @@ COPY system/ /
 
 RUN bash /tmp/swarf/build/configure.sh && rm -rf /tmp/swarf
 
+# The initramfs of the base image has no Plymouth: rebuild it now that the package is there (docs/adr/0025).
+RUN kver=$(cd /usr/lib/modules && echo *) && dracut --force --no-hostonly --reproducible /usr/lib/modules/$kver/initramfs.img $kver
+
 RUN bootc container lint

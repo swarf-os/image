@@ -1,0 +1,76 @@
+name: iso
+
+# Weekly: build the installer ISO from the digest that :stable points to, sign SHA256SUMS (keyless)
+# and keep the files as workflow artifacts. Pull requests that touch the ISO files only build it
+# (no signature). The ISO is built in rootless podman, as on a workstation (tools/iso-build.sh).
+on:
+  schedule:
+    - cron: '41 5 * * 0'
+  pull_request:
+    paths:
+      - 'iso/**'
+      - 'tools/iso-build.sh'
+      - 'tools/ci-runner-setup.sh'
+      - '.github/workflows/iso.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: iso-${{ github.event_name == 'pull_request' && github.ref || 'publish' }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  iso:
+    # Fork pull requests have no package rights and must not run a 30 minute build.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-26.04
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      SIGN: ${{ github.event_name != 'pull_request' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Prepare the runner
+        run: |
+          echo "WORK=$RUNNER_TEMP/ci" >>"$GITHUB_ENV"
+          tools/ci-runner-setup.sh
+
+      - name: Resolve :stable to a digest
+        id: base
+        run: |
+          digest=$(skopeo inspect --no-creds --format '{{.Digest}}' docker://ghcr.io/swarf-os/image:stable)
+          echo "ref=ghcr.io/swarf-os/image@$digest" >>"$GITHUB_OUTPUT"
+          echo "Installing $digest"
+
+      - name: Build the ISO
+        run: tools/iso-build.sh "${{ steps.base.outputs.ref }}"
+
+      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+        if: env.SIGN == 'true'
+
+      - name: Sign SHA256SUMS (keyless)
+        if: env.SIGN == 'true'
+        run: cosign sign-blob --yes --bundle "$WORK/iso/out/SHA256SUMS.bundle" "$WORK/iso/out/SHA256SUMS"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: swarf-os-iso
+          path: |
+            ${{ runner.temp }}/ci/iso/out/*.iso
+            ${{ runner.temp }}/ci/iso/out/SHA256SUMS
+            ${{ runner.temp }}/ci/iso/out/SHA256SUMS.bundle
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: iso-logs
+          path: ${{ runner.temp }}/ci/iso/iso-build.log
+          if-no-files-found: ignore

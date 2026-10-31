@@ -44,3 +44,6 @@ layout=/usr/share/plasma/layout-templates/org.kde.plasma.desktop.defaultPanel/co
 grep -q 'addWidget("org.kde.plasma.icontasks")' "$layout"
 sed -i 's/"org\.kde\.plasma\.icontasks"/"org.kde.plasma.taskmanager"/' "$layout"
 grep -q 'addWidget("org.kde.plasma.taskmanager")' "$layout"
+# No pinned launchers (maintainer request, docs/adr/0012): write an empty list over the widget default.
+sed -i 's/^panel\.addWidget("org\.kde\.plasma\.taskmanager")$/var taskManager = &\ntaskManager.currentConfigGroup = ["General"]\ntaskManager.writeConfig("launchers", "")/' "$layout"
+grep -q 'writeConfig("launchers", "")' "$layout"

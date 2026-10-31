@@ -1,0 +1,12 @@
+# Live installer image: the swarf-os image plus Anaconda (WebUI), a live session, the Flatpaks
+# and the image to install (an OCI directory, the same digest the ISO is built from). Never
+# published; Titanoboa turns it into the ISO (tools/iso-build.sh, which passes the build
+# context "payload" and the build arguments, and builds with --cap-add sys_admin
+# --security-opt label=disable like Titanoboa's examples: flatpak needs bwrap).
+ARG BASE
+FROM ${BASE}
+ARG ISO_LABEL
+COPY iso/ /tmp/swarf-iso/
+COPY --from=payload / /usr/lib/swarf-iso/payload/
+RUN --mount=type=cache,target=/var/cache/libdnf5 \
+    ISO_LABEL="$ISO_LABEL" bash /tmp/swarf-iso/build.sh && rm -rf /tmp/swarf-iso

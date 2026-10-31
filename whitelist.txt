@@ -85,7 +85,14 @@ fedora-logos
 
 # --- Fonts
 default-fonts-core
+default-fonts-other
+default-fonts-cjk
 google-noto-emoji-fonts
+
+# --- Boot splash and graphical LUKS prompt (docs/adr/0025)
+plymouth
+plymouth-system-theme
+plymouth-theme-spinner
 
 # --- Locales: all of them (replaces glibc-minimal-langpack)
 glibc-all-langpacks
