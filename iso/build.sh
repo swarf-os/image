@@ -74,10 +74,10 @@ grub2:
   timeout: 10
   entries:
     - name: "swarf-os live installer"
-      linux: "/images/pxeboot/vmlinuz quiet root=live:CDLABEL=$ISO_LABEL enforcing=0 rd.live.image"
+      linux: "/images/pxeboot/vmlinuz rhgb quiet root=live:CDLABEL=$ISO_LABEL enforcing=0 rd.live.image"
       initrd: "/images/pxeboot/initrd.img"
     - name: "swarf-os live installer (basic graphics)"
-      linux: "/images/pxeboot/vmlinuz quiet root=live:CDLABEL=$ISO_LABEL enforcing=0 rd.live.image nomodeset"
+      linux: "/images/pxeboot/vmlinuz rhgb quiet root=live:CDLABEL=$ISO_LABEL enforcing=0 rd.live.image nomodeset"
       initrd: "/images/pxeboot/initrd.img"
 YAML
 
