@@ -1,3 +1,3 @@
 base: sha256:b3f3896fdefc7e6b285a0df0667338e4438da8ad82cb8dbd9625ab34e8f35903
 kernel: 7.2.13-200.fc44.x86_64
-packages: 1382
+packages: 1375

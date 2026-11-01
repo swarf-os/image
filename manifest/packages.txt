@@ -101,6 +101,7 @@ cryptsetup.x86_64
 cups-filesystem.noarch
 cups-libs.x86_64
 curl.x86_64
+cxx-rust-cssparser.x86_64
 cyrus-sasl-gssapi.x86_64
 cyrus-sasl-lib.x86_64
 dbus-broker.x86_64
@@ -248,9 +249,6 @@ flatpak-libs.x86_64
 flatpak-selinux.noarch
 flatpak-session-helper.x86_64
 flatpak.x86_64
-flexiblas-netlib.x86_64
-flexiblas-openblas-openmp.x86_64
-flexiblas.x86_64
 flite.x86_64
 fmt.x86_64
 fontconfig.x86_64
@@ -823,7 +821,6 @@ libfsverity.x86_64
 libfyaml.x86_64
 libgcc.x86_64
 libgcrypt.x86_64
-libgfortran.x86_64
 libglvnd-egl.x86_64
 libglvnd-gles.x86_64
 libglvnd-glx.x86_64
@@ -905,7 +902,6 @@ libpwquality.x86_64
 libqalculate.x86_64
 libqmi.x86_64
 libqrtr-glib.x86_64
-libquadmath.x86_64
 librabbitmq.x86_64
 libref_array.x86_64
 librepo.x86_64
@@ -962,6 +958,7 @@ libutempter.x86_64
 libuuid.x86_64
 libuv.x86_64
 libva-intel-media-driver.x86_64
+libva-utils.x86_64
 libva.x86_64
 libvdpau.x86_64
 libverto-libev.x86_64
@@ -1063,11 +1060,7 @@ nxpwireless-firmware.noarch
 ocean-sound-theme.noarch
 oniguruma.x86_64
 openapv-libs.x86_64
-openblas-openmp.x86_64
-openblas.x86_64
 opencore-amr.x86_64
-opencv-core.x86_64
-opencv-imgproc.x86_64
 openexr-libs.x86_64
 openh264.x86_64
 openjpeg.x86_64
@@ -1127,6 +1120,7 @@ plasma-setup.x86_64
 plasma-systemmonitor.x86_64
 plasma-systemsettings.x86_64
 plasma-thunderbolt.x86_64
+plasma-union.x86_64
 plasma-workspace-common.x86_64
 plasma-workspace-libs.x86_64
 plasma-workspace.x86_64
@@ -1301,7 +1295,6 @@ systemd-udev.x86_64
 systemd.x86_64
 taglib.x86_64
 tar.x86_64
-tbb.x86_64
 tesseract-common.noarch
 tesseract-langpack-eng.noarch
 tesseract-libs.x86_64
