@@ -24,11 +24,10 @@ Upload and deployment are NOT seen on Cloudflare yet: they run on `main` once th
   binding `ISO` (`worker/wrangler.jsonc`). The Worker serves the page and streams each file from
   R2 with `Range`, `HEAD`, `ETag` and `If-None-Match`, so downloads resume. File URLs are not
   secret and need no word (SPEC).
-- **One ISO only.** The ISO is 4.91 GB (run 41541236834). Two would be 9.8 GB plus the weekly
-  upload peak, about 10.5 GB-month: billed. One stays near 6 GB-month with the upload peak. The
-  SPEC's "keep the last two" is changed. A previous ISO is rebuilt on demand from a dated
-  GHCR tag: `tools/iso-build.sh ghcr.io/swarf-os/image:YYYYMMDD`.
-- **Release folders.** `tools/r2-upload.sh` (called by `iso.yml` after signing, `main` only)
+- **One ISO only** in the bucket: ADR 0031.
+- **Release folders.** `tools/r2-upload.sh` (called by `iso.yml` after signing and after the
+  workflow artifact, so a Cloudflare failure never loses the week's ISO; `main` only, the
+  identity the page's cosign command expects)
   uploads to `YYYYMMDD-HHMM/`: the ISO, `SHA256SUMS`, then `SHA256SUMS.bundle` last. The Worker
   shows the newest folder that has all three, so a half-done upload is never offered. File names
   stay as built (`swarf-os-44-x86_64.iso`), so the signed `SHA256SUMS` stays valid; the date is
