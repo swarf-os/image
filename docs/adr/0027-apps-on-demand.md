@@ -57,4 +57,8 @@ the install. The offline copy also added several GB to the ISO and a failure poi
 - The favourites apply to a new user's first menu; a user who edits them keeps their own list.
 
 ## Seen / not seen
-Filled in at the end of step 6b (PROGRESS.md, session 6b).
+Seen (VM only, 2026-11-02; details in PROGRESS.md, session 6b): install from the local step 6b
+ISO without `%post`; launchers and script in the new account; Waterfox and VLC installed from
+the launchers with no password (admin account); launcher replaced by the app in the favourites;
+self-deletion once both apps are installed; offline, refusal and live-warning messages.
+Not seen: the CI ISO from `main` after the drift PR; any real hardware install.

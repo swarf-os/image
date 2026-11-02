@@ -1,6 +1,6 @@
 # Installing from a USB stick (NUC and Framework)
 
-Status: **do not use an ISO built before step 6b.** Those ISOs copy Flatpaks in a `%post` that stops the install on real hardware (first real install, Packard Bell laptop, 2026-11-02, ADR 0027). Use a CI ISO from `main` built after step 6b and after the "Manifest drift" PR that follows it is merged (so `:stable` has the Wi-Fi firmware and `upower`). The step 6b ISO is seen in a VM only (see PROGRESS.md).
+Status: **do not use an ISO built before step 6b.** Those ISOs copy Flatpaks in a `%post` that stops the install on real hardware (first real install, Packard Bell laptop, 2026-11-02, ADR 0027). Use a CI ISO from `main` built after step 6b and after the "Manifest drift" PR that follows it is merged (so `:stable` has the Wi-Fi firmware and `upower`). Not an ISO from a pull request run: on a pull request `iso.yml` builds from the published `:stable`, without the pull request's image changes. The step 6b ISO is seen in a VM only (see PROGRESS.md).
 
 ## Before
 
