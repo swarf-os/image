@@ -4,24 +4,16 @@
 set -euxo pipefail
 S=/tmp/swarf-iso
 
-# /root is a link to a directory that does not exist in the image; dnf and flatpak want it.
+# /root is a link to a directory that does not exist in the image; dnf wants it.
 mkdir -p "$(realpath /root)"
-# bwrap writes /proc/sys/user/max_user_namespaces, which is read-only in a build container.
-mount -o remount,rw /proc/sys
 
 # Installer, live session, initramfs and bootloader pieces (names checked with dnf5 repoquery
 # in fedora-bootc:44, 2026-10-30). slitherer is the WebUI browser engine of the fedora profile.
 dnf -y --setopt=install_weak_deps=False install \
     anaconda-live anaconda-webui anaconda-install-env-deps slitherer \
     dracut-live livesys-scripts grub2-efi-x64-cdboot \
-    libblockdev-crypto libblockdev-btrfs libblockdev-lvm libblockdev-dm \
-    rsync
+    libblockdev-crypto libblockdev-btrfs libblockdev-lvm libblockdev-dm
 mkdir -p /var/lib/rpm-state    # the WebUI wants it
-
-# Flatpaks, installed system-wide in the live system; the kickstart copies them to the disk.
-flatpak remote-add --system --if-not-exists flathub /usr/share/flatpak/remotes.d/flathub.flatpakrepo
-grep -v '^#' "$S/flatpaks" | xargs flatpak install --system -y --noninteractive flathub
-flatpak list --system --columns=application,origin,size
 
 # Live initramfs (dmsquash-live), same kernel, Fedora's signature untouched.
 kernel=$(ls /usr/lib/modules)

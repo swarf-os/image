@@ -1,0 +1,11 @@
+[Desktop Entry]
+# Launcher that installs Waterfox on first use (docs/adr/0027). Named after Waterfox's own
+# desktop file: deleted once Waterfox is installed, the pinned favourite then starts Waterfox.
+Type=Application
+Name=Internet
+GenericName=Web browser
+Comment=Install a web browser
+Icon=applications-internet
+Exec=sh -c "exec ~/.local/share/swarf/get-app net.waterfox.waterfox"
+Terminal=false
+Categories=Network;WebBrowser;

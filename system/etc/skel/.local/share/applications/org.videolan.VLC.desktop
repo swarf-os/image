@@ -1,0 +1,11 @@
+[Desktop Entry]
+# Launcher that installs VLC on first use (docs/adr/0027). Named after VLC's own desktop file:
+# deleted once VLC is installed, the pinned favourite then starts VLC.
+Type=Application
+Name=Media player
+GenericName=Media player
+Comment=Install a media player
+Icon=applications-multimedia
+Exec=sh -c "exec ~/.local/share/swarf/get-app org.videolan.VLC"
+Terminal=false
+Categories=AudioVideo;Player;
