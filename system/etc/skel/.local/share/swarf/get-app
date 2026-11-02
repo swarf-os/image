@@ -78,7 +78,8 @@ main() {
 
     local answer
     while true; do
-        read -r -p "Install $what? yes or no [y/n] " answer
+        # End of input (Ctrl+D) counts as "no", otherwise the question would loop forever.
+        read -r -p "Install $what? yes or no [y/n] " answer || { echo; answer=n; }
         case ${answer,,} in
             y | yes) break ;;
             n | no)
