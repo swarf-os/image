@@ -1,0 +1,11 @@
+// Cloudflare Worker that serves the swarf-os download page and the ISO from R2 (ADR 0029).
+// Deployed by .github/workflows/worker.yml; served on swarf-os.<account subdomain>.workers.dev.
+{
+  "name": "swarf-os",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "r2_buckets": [
+    { "binding": "ISO", "bucket_name": "swarf-os-iso" }
+  ]
+}

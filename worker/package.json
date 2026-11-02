@@ -1,0 +1,12 @@
+{
+  "name": "swarf-os-worker",
+  "private": true,
+  "description": "Download page for the swarf-os ISO (ADR 0029)",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "check": "wrangler deploy --dry-run --outdir dist"
+  },
+  "devDependencies": {
+    "wrangler": "4.151.1"
+  }
+}

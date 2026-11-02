@@ -1,0 +1,61 @@
+name: worker
+
+# Deploy the download page Worker (worker/, ADR 0029) when it changes on main. Pull requests only
+# build it (wrangler deploy --dry-run, no secret). The ISO itself is published by iso.yml.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'worker/**'
+      - '.github/workflows/worker.yml'
+  pull_request:
+    paths:
+      - 'worker/**'
+      - '.github/workflows/worker.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: worker-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  worker:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: worker
+    env:
+      WRANGLER_SEND_METRICS: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # Node from the same pinned image as the local check, wrangler pinned by package-lock.json.
+      - name: Install wrangler
+        run: >-
+          podman run --rm -v "$PWD:/w" -w /w
+          docker.io/library/node@sha256:4b150b48b4116e2a22f2c39cc27025fbf4f153e2078fd3b14d159fdb5c7279da
+          npm ci --no-fund --no-audit
+
+      - name: Build (dry run)
+        run: >-
+          podman run --rm -v "$PWD:/w" -w /w -e WRANGLER_SEND_METRICS
+          docker.io/library/node@sha256:4b150b48b4116e2a22f2c39cc27025fbf4f153e2078fd3b14d159fdb5c7279da
+          npx wrangler deploy --dry-run --outdir dist
+
+      - name: Deploy
+        if: github.event_name != 'pull_request'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::warning::CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID is not set: the Worker is not deployed."
+            exit 0
+          fi
+          podman run --rm -v "$PWD:/w" -w /w -e WRANGLER_SEND_METRICS -e CLOUDFLARE_API_TOKEN -e CLOUDFLARE_ACCOUNT_ID \
+            docker.io/library/node@sha256:4b150b48b4116e2a22f2c39cc27025fbf4f153e2078fd3b14d159fdb5c7279da \
+            npx wrangler deploy
