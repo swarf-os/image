@@ -60,6 +60,5 @@ the install. The offline copy also added several GB to the ISO and a failure poi
 Seen (VM only, 2026-11-02; details in PROGRESS.md, session 6b): install from the local step 6b
 ISO without `%post`; launchers and script in the new account; Waterfox installed from its
 launcher with no password (admin account), its launcher file deleted and its desktop file
-exported; self-deletion once both apps are installed; offline, refusal and live-warning messages.
-Not seen: VLC installed from its launcher (installed as root for the self-delete test only); the
-favourite renamed in the menu; the CI ISO from `main` after the drift PR; any real hardware install.
+exported, the favourite then showing and starting Waterfox; self-deletion once both apps are installed; offline, refusal and live-warning messages.
+Not seen: VLC installed from its launcher (installed as root for the self-delete test only); the CI ISO from `main` after the drift PR; any real hardware install.
