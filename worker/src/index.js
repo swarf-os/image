@@ -31,8 +31,16 @@ export default {
   },
 };
 
-// The newest complete release folder and its files, or null.
+// The newest complete release folder and its files, or null. Kept for a minute in the isolate:
+// each listing is an R2 class A operation (1 M a month free), and the page is no-store.
+let memo = { at: 0, value: null };
 async function current(env) {
+  if (Date.now() - memo.at < 60_000) return memo.value;
+  memo = { at: Date.now(), value: await list(env) };
+  return memo.value;
+}
+
+async function list(env) {
   const top = await env.ISO.list({ delimiter: "/" });
   const releases = top.delimitedPrefixes.map((p) => p.slice(0, -1)).filter((p) => RELEASE.test(p)).sort().reverse();
   for (const r of releases) {
@@ -58,7 +66,15 @@ async function file(env, request, key, name) {
     headers.set("content-disposition", `attachment; filename="${name}"`);
     return new Response(null, { headers });
   }
-  const object = await env.ISO.get(key, { onlyIf: request.headers, range: request.headers });
+  let object;
+  try {
+    object = await env.ISO.get(key, { onlyIf: request.headers, range: request.headers });
+  } catch (e) {
+    // R2 rejects a range it cannot satisfy (or a malformed one) by throwing; answer 416, not 500.
+    const head = request.headers.has("range") ? await env.ISO.head(key) : null;
+    if (head === null) return new Response("Unavailable\n", { status: 503, headers: { "retry-after": "60" } });
+    return new Response(null, { status: 416, headers: { "content-range": `bytes */${head.size}` } });
+  }
   if (object === null) return new Response("Not found\n", { status: 404 });
   object.writeHttpMetadata(headers);
   headers.set("etag", object.httpEtag);
