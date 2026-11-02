@@ -2,6 +2,7 @@
 
 Draft 12 · 2026-10-29 · names decided (`swarf-os`). Fedora bootc path; the Arch version is kept as `claude/SPEC-arch-backup.md` in the planning project (fallback if this path becomes too hard). Kyanite archive (read for draft 8): `fbmguerin/archive-kyanite-os-fedora-custom`.
 Sources: the Kyanite ADRs, Containerfile, lists and roadmap (read 2026-10-29), plus two Arch/distro comparison reports. Items marked (to verify) were not checked against a primary source in this draft.
+Draft 13 (2026-11-03, step 7): Cloudflare decided (ADR 0029 to 0031): one ISO in R2, not two (free tier), release folders `YYYYMMDD-HHMM/`, Worker on `workers.dev`, client-side visual word; `SHA256SUMS` stays keyless (ADR 0023).
 Draft 12 (2026-10-29, step 5): CI decided (ADR 0013 to 0017): public GHCR image, base `fedora-bootc:latest` with a pull request on any manifest change including `VERSION_ID`, manifest gate without versions or digests.
 Draft 11 (2026-10-29, step 3): settings decided (ADR 0003 to 0008); firewall is a closed `swarf` zone, not Fedora's `public`; Discover reviews (ODRS) deferred to step 4.
 Draft 10 (2026-10-29, step 2): KDE apps, locales and fonts decided (ADR 0002); the 155 `hunspell-*` and all glibc locales are kept after all.
@@ -35,7 +36,7 @@ Draft 8 changes: Fedora logos kept knowingly, free licence, README wording decid
   - project and ISO prefix: `swarf-os` (swarf: the chips and filings cut away from a machined part, which is what the blacklist removes);
   - GitHub organization: `swarf-os`; repository: `swarf-os/image`;
   - registry image: `ghcr.io/swarf-os/image`;
-  - ISO file: `swarf-os-<fedora major>-x86_64.iso` (for example `swarf-os-44-x86_64.iso`), with a signed `SHA256SUMS` carrying the same prefix. No date in the name; add `-YYYYMMDD` only if several ISOs are kept side by side.
+  - ISO file: `swarf-os-<fedora major>-x86_64.iso` (for example `swarf-os-44-x86_64.iso`), with a signed `SHA256SUMS`. No date in the name: only one ISO is published, in a dated folder `YYYYMMDD-HHMM/` of the bucket (ADR 0029).
   - Availability of `swarf-os` (GHCR package, search engines, trademarks) is not yet checked.
 - The name is for the project, repo and ISO only. It is not the image identity: nothing in the image carries it.
 - **Plain Fedora branding, kept knowingly**: `fedora-logos`, Fedora look and feel, wallpapers and Plasma Setup exactly as Fedora ships them. Every Kyanite branding workaround goes away. No name or logo of my own in the image.
@@ -54,8 +55,8 @@ Draft 8 changes: Fedora logos kept knowingly, free licence, README wording decid
 - No public e-mail address. No support: the README says "no support, no contact; open an issue if it is a bug".
 - Commits use the GitHub noreply address. The organization's billing e-mail is a forwarding alias, never shown in the profile.
 - Security reports: GitHub "Private vulnerability reporting" enabled on the repository, referenced from `SECURITY.md`.
-- Signing: cosign keyless (GitHub OIDC), so the identity is the workflow of this repository, not an e-mail. `SHA256SUMS` signing identity to decide in step 5/6 (keyless or a dedicated key).
-- A project domain (for the Cloudflare download page, step 7) would add `security@` as a forwarding alias; not needed before step 7.
+- Signing: cosign keyless (GitHub OIDC), so the identity is the workflow of this repository, not an e-mail. `SHA256SUMS` is signed keyless too (ADR 0023, kept in step 7).
+- No project domain: the download page is on `workers.dev` (ADR 0029). A domain would add `security@` as a forwarding alias.
 
 ## Build model
 ```
@@ -117,8 +118,8 @@ FROM ${BASE}
 - Signed SHA256SUMS next to the ISO; Fedora Media Writer recommended for the USB stick.
 
 ### Hosting and download page (Cloudflare)
-- The ISO file lives in **Cloudflare R2** (a Worker or Pages static asset is limited to a small file size, far below an ISO; to verify exact limits). A **Worker** serves the download page and the download link. Keep the last two ISOs. Upload from CI (multipart upload for multi-GB files).
-- The download page asks for a password. **Visual only**: it keeps casual visitors out, it is not security. The ISO URL itself must not be treated as secret; nothing sensitive may ever be in the image.
+- The ISO file lives in **Cloudflare R2**, bucket `swarf-os-iso` (a Worker or Pages static asset is 25 MiB at most; one R2 request 5 GiB at most, so the ~5 GB ISO goes up in multipart; ADR 0029). A **Worker** `swarf-os` on `workers.dev` serves the download page and streams the files (resumable). **One ISO only** (ADR 0031), to stay in R2's free 10 GB-month (two would be billed; a previous ISO is rebuilt from a dated GHCR tag). Upload from CI (`iso.yml`, weekly, after signing) with rclone; the bucket size is checked after each upload because R2 has no spending cap.
+- The download page asks for a word, checked in the browser (ADR 0030). **Visual only**: it keeps casual visitors out, it is not security. The ISO URL itself must not be treated as secret; nothing sensitive may ever be in the image.
 - Consequence: the ISO is effectively public. Fedora trademark exposure is accepted (see Identity); the fallback there is ready if Fedora objects.
 - The image on GHCR stays the update source for machines; public, no token (ADR 0013).
 
@@ -172,4 +173,4 @@ FROM ${BASE}
 - Licence: MIT or Apache-2.0.
 - (closed, step 4, ADR 0011: no reminder.)
 - (closed, step 5, ADR 0013: GHCR image public.)
-- `SHA256SUMS` signing identity: keyless or dedicated key.
+- (closed, ADR 0023 and step 7: `SHA256SUMS` signed keyless.)

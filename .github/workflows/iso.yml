@@ -1,7 +1,7 @@
 name: iso
 
 # Weekly: build the installer ISO from the digest that :stable points to, sign SHA256SUMS (keyless)
-# and keep the files as workflow artifacts. Pull requests that touch the ISO files only build it
+# publish them to the R2 bucket of the download page (ADR 0029) and keep them as workflow artifacts. Pull requests that touch the ISO files only build it
 # (no signature). The ISO is built in rootless podman, as on a workstation (tools/iso-build.sh).
 on:
   schedule:
@@ -67,6 +67,18 @@ jobs:
           if-no-files-found: error
           compression-level: 0
           retention-days: 14
+
+      # Publish to the R2 bucket served by the Worker (ADR 0029); skipped with a warning when the
+      # secrets are not set. The previous release is deleted only after this one is checked. After the
+      # artifact, so a Cloudflare failure never loses the week's ISO; main only, since the page's
+      # cosign command expects the refs/heads/main identity.
+      - name: Publish to R2
+        if: env.SIGN == 'true' && github.ref == 'refs/heads/main'
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: tools/r2-upload.sh "$WORK/iso/out"
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
