@@ -1,8 +1,8 @@
 name: iso
 
-# Weekly: build the installer ISO from the digest that :stable points to, sign SHA256SUMS (keyless)
-# publish them to the R2 bucket of the download page (ADR 0029) and keep them as workflow artifacts. Pull requests that touch the ISO files only build it
-# (no signature). The ISO is built in rootless podman, as on a workstation (tools/iso-build.sh).
+# Weekly: build the installer ISO from the digest that :stable points to, sign SHA256SUMS (keyless),
+# keep them as workflow artifacts and publish them to the R2 bucket of the download page (ADR 0029).
+# Pull requests that touch the ISO files only build it (no signature). The ISO is built in rootless podman, as on a workstation (tools/iso-build.sh).
 on:
   schedule:
     - cron: '41 5 * * 0'

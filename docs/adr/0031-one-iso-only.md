@@ -11,9 +11,11 @@ billed. The maintainer does not want any R2 bill.
 ## Decision
 The bucket keeps one release. Each weekly run uploads the new one, checks it, then deletes the
 old one (ADR 0029): about 6 GB-month. A previous ISO, if ever needed, is rebuilt from the dated
-GHCR tag of that image: `tools/iso-build.sh ghcr.io/swarf-os/image:YYYYMMDD`. `tools/r2-upload.sh`
+GHCR tag of that image: `tools/iso-build.sh ghcr.io/swarf-os/image:YYYYMMDD` (`tools/prune.sh`
+keeps the 30 newest dated tags, about a month of daily builds). `tools/r2-upload.sh`
 fails the run if the bucket holds more than 8 GB.
 
 ## Consequences
-No ready-made fallback ISO for download. The ISO growing past ~8 GB would fail the guard (and
+No ready-made fallback ISO for download. A download of the old ISO still running when the
+weekly run deletes it cannot resume: start again from the page. The ISO growing past ~8 GB would fail the guard (and
 the free tier with the upload peak): revisit then.

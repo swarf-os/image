@@ -32,7 +32,8 @@ Upload and deployment are NOT seen on Cloudflare yet: they run on `main` once th
   shows the newest folder that has all three, so a half-done upload is never offered. File names
   stay as built (`swarf-os-44-x86_64.iso`), so the signed `SHA256SUMS` stays valid; the date is
   in the folder, not the file (SPEC naming line adjusted).
-- After `rclone check` (sizes and MD5) passes, every other `YYYYMMDD-HHMM/` folder is deleted,
+- After `rclone check --download` passes (the files are read back and compared byte for byte,
+  since a multipart ETag is not an MD5; R2 egress is free), every other `YYYYMMDD-HHMM/` folder is deleted,
   whatever it holds, so a Fedora 45 file name does not leave the 44 ISO behind. Any failure before
   that leaves the previous release online. Then the bucket total is checked: above 8 GB the step
   fails (red run), since R2 would bill silently.
@@ -47,6 +48,8 @@ Upload and deployment are NOT seen on Cloudflare yet: they run on `main` once th
   requests), wrangler 4.151.1 pinned by `package-lock.json`, run in the pinned `node:22` image,
   telemetry off (`WRANGLER_SEND_METRICS=false`, ADR 0004).
 - No secret set → both workflows skip with a warning instead of failing.
+- The Worker deploys from `main` only, even by hand. It keeps the current release for a minute
+  per isolate (each bucket listing is a class A operation). An unsatisfiable range answers 416.
 
 ## Secrets (created by the maintainer, GitHub → Settings → Secrets → Actions)
 - `CLOUDFLARE_ACCOUNT_ID`.
@@ -59,7 +62,7 @@ Upload and deployment are NOT seen on Cloudflare yet: they run on `main` once th
   fake R2: page picks the newest complete folder and ignores an incomplete one,
   `tests/worker-check.sh` OK, 206 for start, open-ended and suffix ranges, a resumed
   `curl -C -` passes `sha256sum -c`, 304 on `If-None-Match`. `tools/r2-upload.sh` against
-  `rclone serve s3`: multipart in equal parts, MD5 checked, old folder (other file name) deleted,
+  `rclone serve s3`: multipart in equal parts, read back with `--download`, old folder (other file name) deleted,
   stray object warned, size guard fails the step, missing secrets skip, partial secrets fail.
-- NOT seen: a real upload to R2 (MD5 on a multipart object relies on rclone's metadata), the
+- NOT seen: a real upload to R2, the 416 answer (local R2 ignores an unsatisfiable range), the
   Worker on Cloudflare, the 5 GB download through it, the weekly run.

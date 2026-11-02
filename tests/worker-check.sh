@@ -33,8 +33,8 @@ sums=$(curl -fsS "$base$dir/SHA256SUMS") || bad "GET SHA256SUMS"
 grep -q " ${iso##*/}\$" <<<"$sums" || bad "SHA256SUMS does not name ${iso##*/}"
 [ "$(curl -s -o /dev/null -w '%{http_code}' -I "$base$dir/SHA256SUMS.bundle")" = 200 ] || bad "no SHA256SUMS.bundle"
 
-for p in /nothing "$dir/missing.iso" /../etc/passwd; do
-  c=$(curl -s -o /dev/null -w '%{http_code}' "$base$p")
+for p in /nothing "$dir/missing.iso" /../etc/passwd "$dir/../SHA256SUMS"; do
+  c=$(curl -s --path-as-is -o /dev/null -w '%{http_code}' "$base$p")
   [ "$c" = 404 ] || bad "GET $p gave $c, expected 404"
 done
 c=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$base/")

@@ -7,7 +7,7 @@
 # Optional: R2_BUCKET (swarf-os-iso), R2_ENDPOINT (tests), R2_MAX_BYTES (8000000000).
 #
 # Order: upload into a new folder YYYYMMDD-HHMM/ (ISO, SHA256SUMS, then the bundle, which marks
-# the release complete for the Worker), compare sizes and hashes, then delete every other release
+# the release complete for the Worker), read them back and compare, then delete every other release
 # folder, whatever its file names (a Fedora 45 ISO name does not leave the 44 one behind). If any
 # step fails before the deletion, the previous release stays online. Finally the bucket size is
 # checked against R2_MAX_BYTES: R2 is free up to 10 GB-month and has no spending cap.
@@ -65,8 +65,10 @@ echo "== upload $iso to $BUCKET/$release ($(date -u +%H:%M:%S))"
 for f in "$iso" SHA256SUMS SHA256SUMS.bundle; do
     rc copyto "$f" "$dest/$f"
 done
-echo "== check sizes and hashes"
-rc check --one-way . "$dest" --include "$iso" --include SHA256SUMS --include SHA256SUMS.bundle
+# Read the files back and compare the bytes: a multipart object's ETag is not an MD5, and the
+# previous release is deleted right after (R2 egress is free; ~5 GB, a few minutes).
+echo "== read back and compare ($(date -u +%H:%M:%S))"
+rc check --one-way --download . "$dest" --include "$iso" --include SHA256SUMS --include SHA256SUMS.bundle
 
 echo "== delete the previous releases"
 while read -r d; do
