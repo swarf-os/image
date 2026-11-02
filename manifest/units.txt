@@ -50,4 +50,5 @@ systemd-tpm2-clear.service enabled
 systemd-userdbd.socket enabled
 thermald.service enabled
 udisks2.service enabled
+upower.service enabled
 uresourced.service enabled
