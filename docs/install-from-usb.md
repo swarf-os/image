@@ -1,6 +1,6 @@
 # Installing from a USB stick (NUC and Framework)
 
-Status: **do not use an ISO built before step 6b.** Those ISOs copy Flatpaks in a `%post` that stops the install on real hardware (first real install, Packard Bell laptop, 2026-11-02, ADR 0027). Seen working only in a VM (3 installs). Use the CI ISO from `main` once step 6b is merged.
+Status: **do not use an ISO built before step 6b.** Those ISOs copy Flatpaks in a `%post` that stops the install on real hardware (first real install, Packard Bell laptop, 2026-11-02, ADR 0027). Use a CI ISO from `main` built after step 6b and after the "Manifest drift" PR that follows it is merged (so `:stable` has the Wi-Fi firmware and `upower`). Not an ISO from a pull request run: on a pull request `iso.yml` builds from the published `:stable`, without the pull request's image changes. The step 6b ISO is seen in a VM only (see PROGRESS.md).
 
 ## Before
 
@@ -27,6 +27,10 @@ The NUC has two disks. Install **only on the Samsung MZ7LN128 (about 128 GB; it 
 - Boot the stick from the one-time boot menu (the key shown at power-on).
 - Single disk: erase it only if nothing on it is needed.
 
+## After install: Waterfox and VLC
+
+The system has no apps from Flathub at first. The menu shows "Internet" and "Media player" at the top of the favourites: click one, a terminal window opens, answer `y`, and the app is downloaded from Flathub (a network is needed; Wi-Fi from the network icon). The launcher then becomes the app itself. An admin account is not asked for a password. The same works in the live session, but the app lives in RAM until the restart.
+
 ## If the install fails
 
 Do not reboot: the logs live in memory. In the live session, plug a second USB stick (never the ISO stick, never the target disk), open it once in Dolphin so it mounts, then run this in Konsole (the logs under `/tmp` are readable by root only). It prints `COPIE-OK` when the archive `swarf-diag.tgz` is on the stick:
@@ -35,4 +39,4 @@ Do not reboot: the logs live in memory. In the live session, plug a second USB s
 sudo bash -c 'W=/tmp/diag; rm -rf $W; mkdir -p $W; { date; cat /proc/cmdline; lsblk -o NAME,SIZE,MODEL,TRAN,FSTYPE,MOUNTPOINTS; findmnt; free -h; df -h; ip -br addr; nmcli device; cat /sys/class/net/*/device/uevent; ls -la /sys/class/power_supply; systemctl list-units --failed --no-pager; ls -la /tmp; } > $W/etat.txt 2>&1; dmesg > $W/dmesg.txt 2>&1; journalctl -b --no-pager > $W/journal.txt 2>&1; cp -r /tmp/*.log /tmp/anaconda* /tmp/ks-script* /tmp/syslog $W/ 2>/dev/null; tar czf /tmp/swarf-diag.tgz -C /tmp diag; D=$(ls -d /run/media/liveuser/*/ 2>/dev/null | head -n 1); if [ -z "$D" ]; then echo "NO STICK MOUNTED: archive in /tmp/swarf-diag.tgz"; else cp /tmp/swarf-diag.tgz "$D" && sync && echo COPIE-OK; fi'
 ```
 
-An earlier VM failure of the `%post` step ("No space left on device") was never explained.
+An earlier VM failure of the old Flatpak `%post` ("No space left on device") was never explained; that `%post` is gone since step 6b.

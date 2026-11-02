@@ -26,6 +26,8 @@ kde-gtk-config
 xorg-x11-server-Xwayland
 powerdevil
 power-profiles-daemon
+# Battery level for the panel (Powerdevil reads it through UPower; only upower-libs came along)
+upower
 
 # --- Applications
 dolphin
@@ -69,6 +71,9 @@ plasma-firewall-firewalld
 # --- Network
 NetworkManager-wifi
 wpa_supplicant
+# Intel Wi-Fi firmware (iwlwifi-so-a0-hr-b0-89.ucode, AX101; pulls iwlwifi-mld-firmware and
+# iwlbluetooth-firmware). linux-firmware does not bring it (docs/adr/0028).
+iwlwifi-mvm-firmware
 
 # --- Graphics (Intel; no audio server, see blacklist.txt)
 mesa-dri-drivers

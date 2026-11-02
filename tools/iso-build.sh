@@ -28,7 +28,7 @@ iso=swarf-os-$version_id-x86_64.iso
 step "payload: $src -> $WORK/payload"
 skopeo copy "$src" "oci:$WORK/payload" >>"$log" 2>&1
 
-step "live image (Anaconda, Flatpaks, payload)"
+step "live image (Anaconda, payload)"
 podman build --cap-add sys_admin --security-opt label=disable --ulimit core=0 \
     --build-context "payload=$WORK/payload" --build-arg "BASE=$base" --build-arg "ISO_LABEL=$label" \
     -f "$R/iso/Containerfile" -t localhost/swarf-os-live:iso "$R" >>"$log" 2>&1 || {

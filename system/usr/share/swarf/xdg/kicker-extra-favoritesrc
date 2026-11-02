@@ -1,0 +1,7 @@
+# Plasma menu favourites for new users (docs/adr/0027). Read by the kicker plugin shared with
+# Kickoff; replaces Fedora's list (kde-settings), which comes later in XDG_CONFIG_DIRS. Fedora's
+# entries kept, minus preferred://browser (Waterfox is pinned instead) and Kontact (not installed).
+# The first two are the "Internet" and "Media player" launchers until the apps are installed.
+[General]
+Prepend=net.waterfox.waterfox.desktop;org.videolan.VLC.desktop;systemsettings.desktop;org.kde.dolphin.desktop;org.kde.kwrite.desktop;org.kde.konsole.desktop;org.kde.discover.desktop
+IgnoreDefaults=true

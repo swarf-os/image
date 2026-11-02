@@ -92,7 +92,7 @@ FROM ${BASE}
 ## Flatpak
 - Flathub only (static remote in `/usr/share/flatpak/remotes.d/`), system-wide. No Fedora Flatpak repo.
 - User apps in Flatpak: Waterfox, VLC.
-- **Not preinstalled, installed on demand** (ADR 0027, replaces the offline copy of ADR 0021): the ISO carries no Flatpak. Two generic launchers pinned in the Plasma menu, "Internet" and "Media player", start an unprivileged step-by-step text interface in plain English that installs Waterfox or VLC from Flathub; Flatpak's polkit prompt asks for the password. Installed apps then update from Flathub (to verify).
+- **Not preinstalled, installed on demand** (ADR 0027, replaces the offline copy of ADR 0021): the ISO carries no Flatpak. Two generic launchers pinned first in the Plasma menu, "Internet" and "Media player", open an unprivileged plain-English script in Konsole that asks once and installs Waterfox or VLC from Flathub, system-wide. Launchers and script are copied from `/etc/skel` into new homes; a launcher is deleted once its app is installed (its favourite then starts the app) and the script deletes itself once both are. Polkit is Flatpak's default: an admin (`wheel`) installs without a password, another user is asked for an admin password. Same on the live ISO, with a RAM warning. Installed apps then update from Flathub (to verify).
 - No audio server by default. Audio is a documented command (layering `pipewire wireplumber pipewire-pulseaudio plasma-pa` with `rpm-ostree`, after removing them from the blacklist for that machine). No `ujust`.
 
 ## Updates (transparent, no automatic reboot)
@@ -142,7 +142,7 @@ FROM ${BASE}
 
 ## Machines
 - Build/test host: Intel NUC (i5-8259U, 16 GB), Fedora Kinoite. Rootless `podman build`.
-- Targets: Intel NUC, Framework 13 Pro. PackardBell dropped (given away).
+- Targets: Intel NUC, Framework 13 Pro. A Packard Bell laptop (Intel AX101 Wi-Fi) served for the first real install (2026-11-02).
 - Test VM: Fedora Cloud / bootc VM with OVMF Secure Boot and TPM.
 
 ## Agent rules (→ AGENTS.md, < 100 lines)
@@ -161,7 +161,7 @@ FROM ${BASE}
 4. Update behaviour: Discover updates Flatpak and system, staged, no password, no reboot; decide the reboot reminder.
 5. CI: daily build, manifest check, boot test, `:testing` → `:stable`, issue on failure.
 6. ISO: Titanoboa, Anaconda WebUI, LUKS, keymap check, Plasma Setup at first boot; install from USB on the NUC and the Framework (with the step 6b ISO).
-6b. Apps on demand and laptop hardware: remove the embedded Flatpaks and their `%post`; "Internet" and "Media player" launchers pinned in the menu, unprivileged plain-English TUI installing Waterfox or VLC (polkit password); Intel Wi-Fi firmware and `upower` in the image.
+6b. Apps on demand and laptop hardware: remove the embedded Flatpaks and their `%post`; "Internet" and "Media player" launchers pinned in the menu, plain-English script in Konsole installing Waterfox or VLC, no privilege of its own (polkit decides: no password for the admin account, ADR 0027); Intel Wi-Fi firmware (`iwlwifi-mvm-firmware`) and `upower` in the image (ADR 0028).
 7. Cloudflare: R2 bucket, Worker, download page with the visual password, upload from CI.
 8. Switch the real machine; rollback tested before needing it.
 9. README: install, update behaviour, audio, rollback, and the frank Fedora-logo statement described under Identity.

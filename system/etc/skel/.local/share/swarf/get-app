@@ -1,0 +1,110 @@
+#!/bin/bash
+# Installs one app from Flathub when its menu launcher ("Internet", "Media player") is clicked
+# (docs/adr/0027). Usage: get-app <flatpak app id>
+# Copied into each new home from /etc/skel. Each launcher is named after its app's own desktop
+# file, so it hides the app until the app is installed; then the launcher is deleted and the
+# pinned favourite points at the real app. Once every app below is installed, this script
+# deletes itself. No privilege: Flatpak's polkit rules decide (an admin installs without a
+# password, another user is asked for an admin password).
+# The whole program sits in main(), called on the last line: bash has read the file to the end
+# before the script deletes it.
+
+main() {
+    # The only list: Flathub app id -> what a beginner reads.
+    local -A apps=(
+        [net.waterfox.waterfox]="Waterfox (web browser)"
+        [org.videolan.VLC]="VLC (media player)"
+    )
+    local id=${1:-}
+    local self launchers=$HOME/.local/share/applications
+    self=$(realpath "${BASH_SOURCE[0]}")
+
+    if [ -z "$id" ] || [ -z "${apps[$id]:-}" ]; then
+        echo "Unknown app: '$id'." >&2
+        return 2
+    fi
+    local what=${apps[$id]}
+
+    installed() { flatpak info --system "$1" >/dev/null 2>&1; }
+
+    # Delete the launcher of an installed app, and this script once nothing is left to install.
+    tidy() {
+        local a
+        for a in "${!apps[@]}"; do
+            installed "$a" && rm -f "$launchers/$a.desktop"
+        done
+        for a in "${!apps[@]}"; do
+            installed "$a" || return 0
+        done
+        rm -f "$self"
+        rmdir "$(dirname "$self")" 2>/dev/null || true
+    }
+
+    # Already installed (from Discover, or by another user): start the app, no window.
+    if installed "$id"; then
+        tidy
+        exec flatpak run "$id"
+    fi
+
+    # Clicked from the menu: open a terminal window to show what happens.
+    if ! [ -t 0 ]; then
+        exec konsole -e "$self" "$id"
+    fi
+
+    pause() { echo; read -r -p "Press Enter to close this window. " _; }
+
+    echo "$what is not installed yet."
+    echo "It can be installed from Flathub, the app store this system uses."
+    echo
+
+    if grep -qw rd.live.image /proc/cmdline; then
+        echo "WARNING: you are running the live system (from the USB stick)."
+        echo "The app goes into memory (RAM) only: it is lost when the computer restarts."
+        echo "Installing it needs about 3 GB of free memory, and using it needs more"
+        echo "(every web page or video also takes memory). This is risky: if memory"
+        echo "runs out, the computer can freeze."
+        echo
+    fi
+
+    # Is Flathub reachable? Any answer from its address will do (curl: 0 = it answered).
+    local url
+    url=$(flatpak remotes --system --columns=name,url | awk '$1 == "flathub" { print $2 }')
+    if [ -z "$url" ] || ! curl -s -o /dev/null --max-time 20 "$url"; then
+        echo "No internet connection: Flathub cannot be reached."
+        echo "Connect to a network (the network icon at the bottom right), then try again."
+        pause
+        return 1
+    fi
+
+    local answer
+    while true; do
+        # End of input (Ctrl+D) counts as "no", otherwise the question would loop forever.
+        read -r -p "Install $what? yes or no [y/n] " answer || { echo; answer=n; }
+        case ${answer,,} in
+            y | yes) break ;;
+            n | no)
+                echo "Nothing was installed."
+                pause
+                return 0
+                ;;
+        esac
+    done
+
+    echo
+    echo "Installing $what. This can take a few minutes."
+    echo
+    if ! flatpak install --system -y flathub "$id"; then
+        echo
+        echo "The installation failed (see the messages above). Nothing was changed."
+        pause
+        return 1
+    fi
+
+    tidy
+    echo
+    echo "Done. $what is installed and stays in the menu. Starting it now."
+    setsid -f flatpak run "$id" >/dev/null 2>&1
+    pause
+}
+
+main "$@"; exit

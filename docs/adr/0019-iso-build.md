@@ -11,9 +11,10 @@ Date: 2026-10-30. Status: accepted (maintainer: build in GitHub CI; local build 
 - `tools/iso-build.sh BASE` does the work and runs the same on a workstation: no `sudo`.
   1. `skopeo copy` of the image to an OCI directory (the payload to install).
   2. `podman build` of `iso/Containerfile`: `FROM` the image, plus Anaconda WebUI, the live
-     bits (dracut `dmsquash-live`, `livesys-scripts`, a GRUB EFI), the Flatpaks and the payload.
-     It needs `--cap-add sys_admin --security-opt label=disable` (rootless `flatpak install`
-     and dracut).
+     bits (dracut `dmsquash-live`, `livesys-scripts`, a GRUB EFI) and the payload.
+     It needs `--cap-add sys_admin --security-opt label=disable` (dracut; it was also for
+     rootless `flatpak install`, removed in step 6b, ADR 0027: the flags are kept because a
+     build without them has not been tried).
   3. Titanoboa's `build_iso.sh` (ublue-os/titanoboa, Apache-2.0), downloaded at commit
      `5c457c3d0518bd17e754be0fd98a60d29d26abb4` and checked against its sha256, run in a
      `quay.io/fedora/fedora` container with the live image mounted by `--mount type=image`.
