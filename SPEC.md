@@ -92,7 +92,7 @@ FROM ${BASE}
 ## Flatpak
 - Flathub only (static remote in `/usr/share/flatpak/remotes.d/`), system-wide. No Fedora Flatpak repo.
 - User apps in Flatpak: Waterfox, VLC.
-- **Preinstalled and embedded in the ISO**: the ISO carries the Flatpaks (Waterfox, VLC, their runtimes) and the install puts them on the system offline (Flatpak sideload, from a kickstart `%post` or a first-boot unit). The bootc image itself does not carry them (`/var` is not part of the image, and they would be re-downloaded on every update). Mechanism to verify in step 6; installed apps then update from Flathub (to verify).
+- **Not preinstalled, installed on demand** (ADR 0027, replaces the offline copy of ADR 0021): the ISO carries no Flatpak. Two generic launchers pinned in the Plasma menu, "Internet" and "Media player", start an unprivileged step-by-step text interface in plain English that installs Waterfox or VLC from Flathub; Flatpak's polkit prompt asks for the password. Installed apps then update from Flathub (to verify).
 - No audio server by default. Audio is a documented command (layering `pipewire wireplumber pipewire-pulseaudio plasma-pa` with `rpm-ostree`, after removing them from the blacklist for that machine). No `ujust`.
 
 ## Updates (transparent, no automatic reboot)
@@ -160,7 +160,8 @@ FROM ${BASE}
 3. Config: telemetry off, services, firewall, KWallet off, quiet defaults.
 4. Update behaviour: Discover updates Flatpak and system, staged, no password, no reboot; decide the reboot reminder.
 5. CI: daily build, manifest check, boot test, `:testing` → `:stable`, issue on failure.
-6. ISO: Titanoboa, Anaconda WebUI, LUKS, keymap check, Flatpaks embedded and installed offline, Plasma Setup at first boot; install from USB on the NUC and the Framework.
+6. ISO: Titanoboa, Anaconda WebUI, LUKS, keymap check, Plasma Setup at first boot; install from USB on the NUC and the Framework (with the step 6b ISO).
+6b. Apps on demand and laptop hardware: remove the embedded Flatpaks and their `%post`; "Internet" and "Media player" launchers pinned in the menu, unprivileged plain-English TUI installing Waterfox or VLC (polkit password); Intel Wi-Fi firmware and `upower` in the image.
 7. Cloudflare: R2 bucket, Worker, download page with the visual password, upload from CI.
 8. Switch the real machine; rollback tested before needing it.
 9. README: install, update behaviour, audio, rollback, and the frank Fedora-logo statement described under Identity.

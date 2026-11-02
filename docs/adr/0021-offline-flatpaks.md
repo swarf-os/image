@@ -1,6 +1,6 @@
 # 0021 — Flatpaks are installed in the live image and copied to the target (step 6)
 
-Date: 2026-10-30. Status: accepted (Waterfox and VLC installed from the ISO and start in the VM).
+Date: 2026-10-30. Status: superseded by ADR 0027 (maintainer decision 2026-11-02; the code is removed in step 6b). Worked in the VM; failed on the first real install once `set -e` was added (see ADR 0027).
 
 ## Decision
 - `iso/build.sh` installs the applications of `iso/flatpaks` system-wide from Flathub when the
