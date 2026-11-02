@@ -14,7 +14,11 @@ the offline copy is removed.
   later in `XDG_CONFIG_DIRS`): same entries minus `preferred://browser` and Kontact.
 - Both start one script, `~/.local/share/swarf/get-app <app id>`, in Konsole: plain English, no
   menu (maintainer, 2026-11-02): it says what the app is, warns on the live system (the app
-  goes to RAM and is lost at restart; detected by `rd.live.image` on the kernel command line),
+  goes to RAM and is lost at restart; detected by `rd.live.image` on the kernel command line;
+  a fixed text, not computed: "about 3 GB of free memory" to install, more to use it, risky.
+  Rounded up from `flatpak list --system` in the VM, 2026-11-02: Waterfox 515 MB +
+  freedesktop Platform 671 MB + GL 462 MB (+ 462 MB extra) + codecs 43 MB; VLC 150 MB + KDE
+  Platform 974 MB + the same GL; both apps together 2.8 GB on disk),
   checks that the Flathub URL from `flatpak remotes` answers (otherwise a clear message and
   exit), asks `Install Waterfox (web browser)? yes or no [y/n]`, runs
   `flatpak install --system -y flathub <id>` with its progress, then starts the app.
@@ -45,6 +49,11 @@ the install. The offline copy also added several GB to the ISO and a failure poi
 ## Consequences
 - Installing an app needs a network (Wi-Fi firmware: ADR 0028).
 - Only accounts created from this image get the launchers (`/etc/skel`); older accounts do not.
+- The copy in a home is never updated by an image update: a bug fixed later reaches new accounts
+  only; existing ones need a manual fix (or Discover instead). Accepted by the maintainer
+  (2026-11-02) to keep the self-deletion: `/usr` is read-only and shared by all accounts, `/var`
+  and `/etc` belong to root and `/var` is never updated by bootc either. Hence a thorough VM test
+  before the first real install.
 - The favourites apply to a new user's first menu; a user who edits them keeps their own list.
 
 ## Seen / not seen

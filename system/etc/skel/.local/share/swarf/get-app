@@ -59,8 +59,10 @@ main() {
 
     if grep -qw rd.live.image /proc/cmdline; then
         echo "WARNING: you are running the live system (from the USB stick)."
-        echo "The app goes into memory (RAM) only: it is lost when the computer restarts,"
-        echo "and a big app may not fit if the computer has little memory."
+        echo "The app goes into memory (RAM) only: it is lost when the computer restarts."
+        echo "Installing it needs about 3 GB of free memory, and using it needs more"
+        echo "(every web page or video also takes memory). This is risky: if memory"
+        echo "runs out, the computer can freeze."
         echo
     fi
 
