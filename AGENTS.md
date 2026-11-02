@@ -12,6 +12,7 @@ Personal Fedora bootc image (Plasma, minimal). `SPEC.md` is the source of truth.
 - One step per session: read SPEC.md + PROGRESS.md, do the step, update PROGRESS.md, commit, stop.
 - One short ADR per decision, written when decided.
 - Code and docs in English.
+- Pull requests opened by automation carry a French version of their text below the English one.
 - At the end of a step, call the supervisor model (`advisor`) for a quick check of the work, then generate the launch prompt for the next step (see "Launch prompt" below).
 - Say it = do it. "I'm starting X" must be a tool call in the same turn. "I'll tell you when X" must start a background watcher in the same turn (see "Long jobs"). Never end a turn with a promise and nothing running.
 - Test fixtures (test kickstart, extra disks, overrides) must not set what the test verifies. Before a check, list the fixtures attached; remove them for the final check. Note them in `PROGRESS.md` next to the result.

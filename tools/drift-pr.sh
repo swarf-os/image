@@ -27,19 +27,19 @@ git add manifest
 git commit -qm "Manifest: update to tested image $digest"
 git push -f origin "$branch"
 {
-    echo "**En français.** L'image quotidienne a passé tous les contrôles, mais elle diffère de \`manifest/\` : \`:testing\` est publié et \`:stable\` reste en attente."
-    echo
-    echo "Digest testé : \`$digest\` (\`ghcr.io/swarf-os/image:testing\`)."
-    echo
-    echo "**Fusionner cette pull request promeut exactement ce digest vers \`:stable\` (nouvelle étiquette, sans reconstruction).** Avant de fusionner, démarre-le dans une VM et regarde : écran de démarrage absent, gestionnaire de tâches avec les titres, KWallet ne s'ouvre pas, Vue d'ensemble désactivée, Paramètres → Mise à jour des logiciels affiche les mises à jour automatiques quotidiennes."
-    echo
-    echo '---'
-    echo
     echo "The daily image passed every check, but it differs from \`manifest/\`, so \`:testing\` is published and \`:stable\` is held."
     echo
     echo "Tested digest: \`$digest\` (\`ghcr.io/swarf-os/image:testing\`)."
     echo
     echo "**Merging this pull request promotes exactly that digest to \`:stable\` (retag, no rebuild).** Before merging, boot it in a VM and look at: splash screen absent, task manager with titles, KWallet does not open, Overview off, System Settings → Software Update shows daily automatic updates."
+    echo
+    echo '---'
+    echo
+    echo "**En français.** L'image quotidienne a passé tous les contrôles, mais elle diffère de \`manifest/\` : \`:testing\` est publié et \`:stable\` reste en attente."
+    echo
+    echo "Digest testé : \`$digest\` (\`ghcr.io/swarf-os/image:testing\`)."
+    echo
+    echo "**Fusionner cette pull request promeut exactement ce digest vers \`:stable\` (nouvelle étiquette, sans reconstruction).** Avant de fusionner, démarre-le dans une VM et regarde : écran de démarrage absent, gestionnaire de tâches avec les titres, KWallet ne s'ouvre pas, Vue d'ensemble désactivée, Paramètres → Mise à jour des logiciels affiche les mises à jour automatiques quotidiennes."
     echo
     echo '<details><summary>Diff</summary>'
     echo
