@@ -20,12 +20,10 @@ No support, no roadmap, personal use.
   one. If you are not me, act as if you had not seen this repository.
 - **If you fork it, re-theme it properly:** logos, release identity and branding. The Fedora
   logos must not travel with your copy.
-- **Why the logos stay:** the replacement Fedora provides, `generic-logos`, swaps the Fedora
-  mark for a shape best described as a sausage. It lands where people look: the menu button
-  (`start-here.svg`), the system logo (`fedora-logo-icon.svg`) and the installer artwork.
-  A neutral fallback package should look neutral, and this one looks like a joke that nobody
-  finished. Rather than ship it, or spend time on artwork for a personal image, I kept
-  Fedora's. If Fedora objects, the fallback is ready (SPEC, "Identity"): `generic-logos`
+- **Why the logos stay:** the replacement Fedora provides, `generic-logos`, puts its own
+  picture ("the sausage") where people look: the menu button (`start-here.svg`), the system
+  logo (`fedora-logo-icon.svg`) and the installer artwork. That picture is the reason: rather
+  than ship it, or spend time on artwork for a personal image, the Fedora logos stay. If Fedora objects, the fallback is ready (SPEC, "Identity"): `generic-logos`
   with the KDE logo as the menu icon.
 - The licence below covers my files only. It grants nothing on Fedora's trademarks.
 
@@ -35,6 +33,9 @@ Two ways: a fresh install from the ISO, or switching a machine that already runs
 Kinoite. Either way the machine then follows `ghcr.io/swarf-os/image:stable`.
 
 ### From a USB stick (wipes the disk)
+
+Status: the current ISO is installed in a VM only; real-hardware installs are still open
+(PROGRESS.md, step 6).
 
 1. **Download** from <https://get.swarf-os.workers.dev>. The page asks for a word. It is not
    a secret, just a filter: anyone curious enough to read the page source will find it.
@@ -71,8 +72,9 @@ sudo tools/switch.sh status      # booted = ghcr.io/swarf-os/image:stable, "dige
 
 Kinoite stays in the boot menu (pinned) to go back to. Settings that depend on a package the
 image leaves out break after the switch: Kinoite's "Picture of the Day" wallpaper, for
-example, leaves the desktop on a missing plugin; `plasma-apply-wallpaperimage
-/usr/share/wallpapers/F44` sets Fedora's wallpaper instead. Full procedure:
+example, leaves the desktop on a missing plugin. Suggested fix, not yet confirmed on a switched
+machine: `plasma-apply-wallpaperimage /usr/share/wallpapers/F44` (Fedora's wallpaper package;
+the tool accepts an installed wallpaper package). Full procedure:
 [docs/switch-and-rollback.md](docs/switch-and-rollback.md).
 
 ## Updates
@@ -101,14 +103,14 @@ systemctl reboot
 
 `alsa-sof-firmware` is the firmware many recent Intel laptops need for their sound card.
 Undo with `sudo rpm-ostree uninstall` and the same names (or `sudo rpm-ostree reset` to drop
-every layered package), then reboot.
+every layered package), then reboot (from `rpm-ostree(1)`; not run here).
 
 What layering changes (ADR 0035):
 - **These packages are not tested by CI.** They come from Fedora's repositories and are
   resolved again on every update, so that machine no longer runs only the tested image. A
   Fedora major upgrade can fail on them; remove them first if it does.
-- Discover keeps updating (it goes through rpm-ostree, which keeps the layer). `bootc upgrade`
-  refuses a layered system.
+- Discover should keep updating: it goes through rpm-ostree, which keeps layered packages on
+  upgrade. Expected, not seen. `bootc upgrade` refuses a layered system (seen).
 - **`tools/switch.sh switch` and `pin-to` refuse a layered system.** Do not use `bootc switch`
   by hand there: it does not refuse, it **removes the layered packages without a word** (seen in
   a VM). Use `rpm-ostree rebase` instead (see Rollback).
@@ -144,6 +146,7 @@ There is **no automatic rollback**: if a new image misbehaves, you go back by ha
   sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/swarf-os/image@sha256:<digest>
   sudo rpm-ostree rebase ostree-unverified-registry:ghcr.io/swarf-os/image:stable   # back
   ```
+  (The first command was seen staging in a VM; the return to `:stable` was not run.)
 - `/etc` belongs to each deployment: a rollback brings back that deployment's `/etc`.
 - **After every reboot, check `status`.** If the booted image did not change, the new
   deployment failed to install at shutdown and the old one booted:

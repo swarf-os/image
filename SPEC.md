@@ -171,7 +171,7 @@ FROM ${BASE}
 ## Open questions
 - Availability of `swarf-os` (GHCR package, search engines, trademark registers). If it fails, only the ISO prefix and the image name change; the organization can be renamed.
 - (closed, step 5, ADR 0014: follow `latest`, pull request on change.)
-- (closed: MIT, `LICENSE` since step 1.)
+- Licence: MIT or Apache-2.0 (`LICENSE` is MIT since step 1; to confirm).
 - (closed, step 4, ADR 0011: no reminder.)
 - (closed, step 5, ADR 0013: GHCR image public.)
 - (closed, ADR 0023 and step 7: `SHA256SUMS` signed keyless.)

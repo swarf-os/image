@@ -46,4 +46,6 @@ Date: 2026-11-05. Status: accepted (maintainer chose the 6-package set, 2026-11-
 ## Fixtures (VM `swarf-dev`)
 `/etc/systemd/system/boot.automount` → `/dev/null` (bcvk `/boot` layout, PROGRESS Session 8);
 the audio layer; the VM was left booted on the staged ghcr `:stable` deployment (no sshd) and
-shut down. Rebuild it with `tools/rebuild-vm.sh` before the next VM test.
+shut down. Rebuild it before the next VM test: `tools/rebuild-vm.sh` runs two `podman build` (30 GB free
+needed, 26 GB on 2026-11-05), or run only its `bcvk to-disk` and `virt-install` lines from the
+existing `localhost/swarf-os:test`.

@@ -20,5 +20,6 @@ Date: 2026-11-05. Status: accepted (maintainer, 2026-11-05).
   in `localhost/swarf-os:dev` (2026-11-05): `start-here.svg`, `fedora-logo-icon.svg`, Anaconda
   pixmaps.
 - **Updates and audio** are described as configured, with what is not yet seen stated
-  (real Discover update, sound). **Licence**: MIT (`LICENSE`), so the SPEC's open "MIT or
-  Apache-2.0" question is closed by the file already in the repository.
+  (real Discover update, sound, real-hardware ISO install). **Licence**: the README says MIT,
+  the `LICENSE` file since step 1; the SPEC question "MIT or Apache-2.0" stays open for the
+  maintainer to confirm.
