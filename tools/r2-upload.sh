@@ -4,7 +4,8 @@
 # Environment: CLOUDFLARE_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY (an R2 token with
 # "Object Read & Write" on the bucket only). If none is set, the upload is skipped with a warning
 # (repository without Cloudflare secrets); if only some are, it fails.
-# Optional: R2_BUCKET (swarf-os-iso), R2_ENDPOINT (tests), R2_MAX_BYTES (8000000000).
+# Optional: R2_BUCKET (swarf-os-iso), R2_JURISDICTION (eu: the bucket's jurisdiction, empty for
+# none), R2_ENDPOINT (tests), R2_MAX_BYTES (8000000000).
 #
 # Order: upload into a new folder YYYYMMDD-HHMM/ (ISO, SHA256SUMS, then the bundle, which marks
 # the release complete for the Worker), read them back and compare, then delete every other release
@@ -17,6 +18,7 @@ WORK=${WORK:-$R/../work}
 RCLONE_VERSION=1.75.2
 RCLONE_SHA256=349ac8fba6ff65d6247043f1750cdcb518ec5d500ef91463a10d37c0ccdf3702
 BUCKET=${R2_BUCKET:-swarf-os-iso}
+JURISDICTION=${R2_JURISDICTION-eu}
 MAX_BYTES=${R2_MAX_BYTES:-8000000000}
 dir=$1
 
@@ -50,7 +52,8 @@ fi
 # Remote "r2:" from the environment, no config file (rclone docs, "Config file" / environment).
 export RCLONE_CONFIG=/dev/null
 export RCLONE_CONFIG_R2_TYPE=s3 RCLONE_CONFIG_R2_PROVIDER=Cloudflare RCLONE_CONFIG_R2_ACL=private
-export RCLONE_CONFIG_R2_ENDPOINT=${R2_ENDPOINT:-https://$CLOUDFLARE_ACCOUNT_ID.r2.cloudflarestorage.com}
+# A bucket in a jurisdiction is reached only through that jurisdiction's endpoint (R2 docs, data location).
+export RCLONE_CONFIG_R2_ENDPOINT=${R2_ENDPOINT:-https://$CLOUDFLARE_ACCOUNT_ID.${JURISDICTION:+$JURISDICTION.}r2.cloudflarestorage.com}
 export RCLONE_CONFIG_R2_ACCESS_KEY_ID=$R2_ACCESS_KEY_ID RCLONE_CONFIG_R2_SECRET_ACCESS_KEY=$R2_SECRET_ACCESS_KEY
 export RCLONE_CONFIG_R2_NO_CHECK_BUCKET=true    # token scoped to objects (Cloudflare rclone page)
 # Multipart above 64 MiB: the ISO (~5 GB) is ~75 parts of the same size (R2: 5 MiB minimum,
