@@ -11,7 +11,7 @@ Draft 8 changes: Fedora logos kept knowingly, free licence, README wording decid
 
 ## Why bootc
 - Zero intervention, updates without effort. A machine only ever receives an image my CI tested.
-- Atomic updates, and rollback to the previous image if a boot fails.
+- Atomic updates, and a manual rollback to the previous image (boot menu or one command; ADR 0034). No automatic rollback: boot counting is an open question.
 - Fedora's Secure Boot chain works as is (shim signed by Microsoft → GRUB → Fedora kernel). No key enrollment, no setup mode.
 - A minimal image made this way is reusable for other projects.
 - Expected failures come from my own configuration and CI, not from Fedora.
@@ -100,7 +100,7 @@ FROM ${BASE}
 - System and Flatpak: Discover unattended updates, on by default, daily (Kyanite ADR 0008: `PlasmaDiscoverUpdates` with `UseUnattendedUpdates=true`, plus `fedora-release-ostree-desktop` for the polkit rule). It stages the new image; it never reboots.
 - A new image applies at the next reboot. User sees a notification, not a forced reboot. `bootc-fetch-apply-updates.timer` stays disabled (it reboots without asking).
 - Accepted limits (inherited from Kinoite): nothing happens without an open session; no "on AC power" check; Discover shows no reboot notification once unattended updates are on. Check in step 4 whether a small reboot reminder is needed.
-- Rollback: `bootc rollback` / boot menu; `bootc switch` to a previous digest. `/etc` is not carried over by a rollback (by design). Do not leave an auto-update timer that undoes a rollback.
+- Rollback (ADR 0034): boot menu (one boot), or `tools/switch.sh rollback` (`bootc rollback`, `rpm-ostree rollback` for a non-container target). To stay back, `tools/switch.sh pin-to` a digest: Discover's daily update re-stages `:stable` after a plain rollback. `/etc` is not carried over by a rollback (by design). Do not leave an auto-update timer that undoes a rollback.
 - Fedora major version: follows `fedora-bootc:latest`; a new major version reaches `:stable` only through a merged pull request (CI step 8, ADR 0014).
 - Firmware: through Discover/fwupd.
 
@@ -143,7 +143,7 @@ FROM ${BASE}
 
 ## Machines
 - Build/test host: Intel NUC (i5-8259U, 16 GB), Fedora Kinoite. Rootless `podman build`.
-- Targets: Intel NUC, Framework 13 Pro. A Packard Bell laptop (Intel AX101 Wi-Fi) served for the first real install (2026-11-02).
+- Targets: Intel NUC, Framework 13 Pro. A Packard Bell laptop (Intel AX101 Wi-Fi) served for the first real install (2026-11-02) and is the machine switched from Kinoite in step 8 (`tools/switch.sh`, ADR 0033), before its ISO test.
 - Test VM: Fedora Cloud / bootc VM with OVMF Secure Boot and TPM.
 
 ## Agent rules (→ AGENTS.md, < 100 lines)
