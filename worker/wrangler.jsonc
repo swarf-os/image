@@ -6,6 +6,7 @@
   "compatibility_date": "2026-10-01",
   "workers_dev": true,
   "r2_buckets": [
-    { "binding": "ISO", "bucket_name": "swarf-os-iso" }
+    // The bucket was created in the EU jurisdiction (cannot be changed): the binding must say so.
+    { "binding": "ISO", "bucket_name": "swarf-os-iso", "jurisdiction": "eu" }
   ]
 }

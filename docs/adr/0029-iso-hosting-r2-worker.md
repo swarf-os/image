@@ -22,9 +22,13 @@ Upload and deployment are NOT seen on Cloudflare yet: they run on `main` once th
   Workers the broader feature set (`workers/static-assets/migration-guides/migrate-from-pages`,
   2026-10-12): Workers kept. Account subdomain `swarf-os`, chosen by the maintainer (2026-11-03).
 - R2 needs an R2 subscription (dashboard checkout) even for the free tier (`r2/get-started`).
+- wrangler is pinned by `worker/package-lock.json` (Dependabot bumps it).
 
 ## Decision
-- Bucket `swarf-os-iso` (private), Worker `get` on `get.swarf-os.workers.dev`,
+- Bucket `swarf-os-iso` (private, EU jurisdiction: chosen by the maintainer at creation, cannot be
+  changed; so the upload uses `https://<account>.eu.r2.cloudflarestorage.com` and the binding sets
+  `jurisdiction: "eu"`, `r2/reference/data-location` 2026-08-19, `workers/wrangler/configuration`
+  2026-10-29), Worker `get` on `get.swarf-os.workers.dev`,
   binding `ISO` (`worker/wrangler.jsonc`). The Worker serves the page and streams each file from
   R2 with `Range`, `HEAD`, `ETag` and `If-None-Match`, so downloads resume. File URLs are not
   secret and need no word (SPEC).
@@ -49,7 +53,7 @@ Upload and deployment are NOT seen on Cloudflare yet: they run on `main` once th
   tested here) to fail on R2 unless `AWS_REQUEST_CHECKSUM_CALCULATION=WHEN_REQUIRED` is set
   (AWS SDK reference, "Data integrity protections").
 - **Worker deployment** by `.github/workflows/worker.yml` on changes to `worker/` (dry run on pull
-  requests), wrangler 4.151.1 pinned by `package-lock.json`, run in the pinned `node:22` image,
+  requests), wrangler pinned by `package-lock.json`, run in the pinned `node:22` image,
   telemetry off (`WRANGLER_SEND_METRICS=false`, ADR 0004).
 - No secret set → both workflows skip with a warning instead of failing.
 - The Worker deploys from `main` only, even by hand. It keeps the current release for a minute
