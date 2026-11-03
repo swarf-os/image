@@ -5,7 +5,7 @@ Status: **do not use an ISO built before step 6b.** Those ISOs copy Flatpaks in 
 ## Before
 
 - **First promote `:stable` (merge the "Manifest drift" PR).** The installed system follows `ghcr.io/swarf-os/image:stable`; until that tag has Plymouth, the fonts and `rhgb`, the first update would remove them.
-- Download the ISO and `SHA256SUMS` from the `iso` workflow run (artifact `swarf-os-iso`) or from the download page (`https://swarf-os.<subdomain>.workers.dev`, word `fraws`, ADR 0029/0030; once the Cloudflare secrets are set). Check it: `sha256sum -c SHA256SUMS`. ISOs built on `main` also carry `SHA256SUMS.bundle`; seen working (2026-11-02): `cosign verify-blob --bundle SHA256SUMS.bundle --certificate-identity https://github.com/swarf-os/image/.github/workflows/iso.yml@refs/heads/main --certificate-oidc-issuer https://token.actions.githubusercontent.com SHA256SUMS`.
+- Download the ISO and `SHA256SUMS` from the `iso` workflow run (artifact `swarf-os-iso`) or from the download page (`https://get.swarf-os.workers.dev`, word `fraws`, ADR 0029/0030; once the Cloudflare secrets are set). Check it: `sha256sum -c SHA256SUMS`. ISOs built on `main` also carry `SHA256SUMS.bundle`; seen working (2026-11-02): `cosign verify-blob --bundle SHA256SUMS.bundle --certificate-identity https://github.com/swarf-os/image/.github/workflows/iso.yml@refs/heads/main --certificate-oidc-issuer https://token.actions.githubusercontent.com SHA256SUMS`.
 - Write the stick with Fedora Media Writer (SPEC.md). Everything on the stick is erased.
 - Secure Boot can stay on (the ISO boots with shim in the VM with Secure Boot).
 

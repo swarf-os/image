@@ -118,7 +118,7 @@ FROM ${BASE}
 - Signed SHA256SUMS next to the ISO; Fedora Media Writer recommended for the USB stick.
 
 ### Hosting and download page (Cloudflare)
-- The ISO file lives in **Cloudflare R2**, bucket `swarf-os-iso` (a Worker or Pages static asset is 25 MiB at most; one R2 request 5 GiB at most, so the ~5 GB ISO goes up in multipart; ADR 0029). A **Worker** `swarf-os` on `workers.dev` serves the download page and streams the files (resumable). **One ISO only** (ADR 0031), to stay in R2's free 10 GB-month (two would be billed; a previous ISO is rebuilt from a dated GHCR tag). Upload from CI (`iso.yml`, weekly, after signing) with rclone; the bucket size is checked after each upload because R2 has no spending cap.
+- The ISO file lives in **Cloudflare R2**, bucket `swarf-os-iso` (a Worker or Pages static asset is 25 MiB at most; one R2 request 5 GiB at most, so the ~5 GB ISO goes up in multipart; ADR 0029). A **Worker** `get` on `https://get.swarf-os.workers.dev` serves the download page and streams the files (resumable). **One ISO only** (ADR 0031), to stay in R2's free 10 GB-month (two would be billed; a previous ISO is rebuilt from a dated GHCR tag). Upload from CI (`iso.yml`, weekly, after signing) with rclone; the bucket size is checked after each upload because R2 has no spending cap.
 - The download page asks for a word, checked in the browser (ADR 0030). **Visual only**: it keeps casual visitors out, it is not security. The ISO URL itself must not be treated as secret; nothing sensitive may ever be in the image.
 - Consequence: the ISO is effectively public. Fedora trademark exposure is accepted (see Identity); the fallback there is ready if Fedora objects.
 - The image on GHCR stays the update source for machines; public, no token (ADR 0013).
