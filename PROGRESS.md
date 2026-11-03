@@ -11,7 +11,7 @@ Steps come from `SPEC.md` (section "Steps").
 - [x] 6b. Apps on demand and laptop hardware: remove the embedded Flatpaks and their `%post`; "Internet" and "Media player" launchers pinned in the menu, plain-English script in Konsole installing Waterfox or VLC (polkit decides; no password for the admin account); Intel Wi-Fi firmware and `upower` in the image (ADR 0027, 0028; Wi-Fi and battery seen on the Packard Bell on 2026-11-04, Session 8).
 - [x] 7. Cloudflare: R2 bucket, Worker, download page with the visual password, upload from CI. (ADR 0029, 0030, 0031; seen on Cloudflare 2026-11-03: https://get.swarf-os.workers.dev; the weekly scheduled upload NOT seen yet, see Session 7)
 - [x] 8. Switch the real machine; rollback tested before needing it. (ADR 0033, 0034; seen on the Packard Bell 2026-11-03/04: switch, rollback to Kinoite, return; see Session 8)
-- [ ] 9. README: install, update behaviour, audio, rollback, and the frank Fedora-logo statement described under Identity.
+- [x] 9. README: install, update behaviour, audio, rollback, and the frank Fedora-logo statement described under Identity. (ADR 0035, 0036; see Session 9)
 
 ## Sessions
 - Session 0 : amorçage
@@ -128,3 +128,12 @@ Steps come from `SPEC.md` (section "Steps").
   - Found: settings that depend on something the image leaves out break on a switched machine. The "Picture of the Day" wallpaper (`kdeplasma-addons`, blacklisted, ADR 0002) leaves the desktop on a missing plugin and the wallpaper page did not let the maintainer pick another one. Not fixed (maintainer); workaround given: `plasma-apply-wallpaperimage /usr/share/wallpapers/F44` (result NOT reported yet).
   - Later (maintainer request): `tools/switch.sh` is too quiet for a person (the 2.6 GB pull shows nothing): show bootc's progress, clearer steps, nicer presentation.
   - Not done there: the boot-menu choice and `pin-to` (seen in the VM only); Discover after a rollback.
+
+- Session 9 (2026-11-04/05): README, branch `step-9-readme` (ADR 0035, 0036).
+  - Maintainer decisions: README install = USB ISO + short Kinoite switch with a link; the download word is not printed ("readable in the page source"); audio = six packages (`pipewire wireplumber pipewire-pulseaudio pipewire-alsa plasma-pa alsa-sof-firmware`).
+  - Files: `README.md` (Fedora logos statement, install, updates, audio, rollback, licence, contact), ADR 0035, 0036, SPEC audio line and licence question, `docs/switch-and-rollback.md` (layered packages sentence).
+  - Checked: names in the image (`rpm -q`, `dnf5 repoquery` in `localhost/swarf-os:dev` and the pulled `:stable` `faa5f33d…`: `git-core`, `jq`, `fwupd`, `plasma-discover-rpm-ostree`, `plasma-apply-wallpaperimage` from plasma-workspace, `/usr/share/wallpapers/F44`); Fedora wiki "Remix" reread (the docs.fedoraproject.org remix guidelines page refused access).
+  - SEEN in the VM `swarf-dev` (2026-11-05): audio layer installs and boots, PipeWire user units enabled; `bootc upgrade` refuses the layered system; `bootc rollback` works; `bootc switch` to a digest silently drops the layer (staged "17 removed"); `rpm-ostree rebase ostree-unverified-registry:…@sha256:` stages with the layer (its boot not observed: `:stable` has no sshd). A second `bootc rollback` without a reboot did not swap back (`rpm-ostree rollback` did).
+  - Fixtures: `boot.automount` masked, the audio layer, the VM left on the ghcr `:stable` deployment and shut down: rebuild `swarf-dev` (`tools/rebuild-vm.sh`) before the next VM test.
+  - NOT seen: sound on any machine; Discover after a rollback; a real Discover update (B). Later: `tools/switch.sh` message "bootc refuses" for layered packages is inexact (bootc switch drops them).
+  - Still open from before, NOT done: B, C, step 5 items, step 6 items, step 6b items (VLC from its launcher, light login screen with dark theme, US LUKS prompt), step 7 weekly upload (2026-11-08) and budget alert mail, step 8 items (boot-menu choice and `pin-to` on hardware, `plasma-apply-wallpaperimage` result, switch.sh UX).
