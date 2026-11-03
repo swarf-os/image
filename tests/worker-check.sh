@@ -1,6 +1,6 @@
 #!/bin/bash
 # Check the download Worker from outside: tests/worker-check.sh BASE_URL
-# (https://swarf-os.<subdomain>.workers.dev, or http://localhost:8787 for wrangler dev).
+# (https://get.swarf-os.workers.dev, or http://localhost:8787 for wrangler dev).
 # Reads the page, follows its ISO and SHA256SUMS links, and checks HEAD, Range (206) and 404.
 # Downloads only the SHA256SUMS file and 1 KiB of the ISO. Prints OK or the failed checks.
 set -uo pipefail

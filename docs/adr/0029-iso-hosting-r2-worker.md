@@ -16,11 +16,15 @@ Upload and deployment are NOT seen on Cloudflare yet: they run on `main` once th
   fee. A GB-month is the daily *peak* averaged over 30 days. No spending cap is documented;
   budget alerts exist (`billing/manage/budget-alerts`) but only send an e-mail.
 - `r2.dev` public buckets are rate-limited and for development only (`r2/buckets/public-buckets`).
-  `workers.dev` needs no domain (`workers/configuration/routing/workers-dev`).
+  `workers.dev` needs no domain; a Worker is served on `<worker name>.<account subdomain>.workers.dev`,
+  never on a path (`workers/configuration/routing/workers-dev`, updated 2026-09-22). Pages would
+  give `<project>.pages.dev` and can bind R2 (`pages/functions/bindings`), but Cloudflare gives
+  Workers the broader feature set (`workers/static-assets/migration-guides/migrate-from-pages`,
+  2026-10-12): Workers kept. Account subdomain `swarf-os`, chosen by the maintainer (2026-11-03).
 - R2 needs an R2 subscription (dashboard checkout) even for the free tier (`r2/get-started`).
 
 ## Decision
-- Bucket `swarf-os-iso` (private), Worker `swarf-os` on `swarf-os.<subdomain>.workers.dev`,
+- Bucket `swarf-os-iso` (private), Worker `get` on `get.swarf-os.workers.dev`,
   binding `ISO` (`worker/wrangler.jsonc`). The Worker serves the page and streams each file from
   R2 with `Range`, `HEAD`, `ETag` and `If-None-Match`, so downloads resume. File URLs are not
   secret and need no word (SPEC).
