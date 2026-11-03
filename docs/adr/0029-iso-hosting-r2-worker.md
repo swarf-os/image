@@ -2,7 +2,7 @@
 
 Date: 2026-11-03. Status: accepted (maintainer: workers.dev, default names, one ISO only to stay
 in the free tier, Worker deployed by CI, signature keyless unchanged, weekly rhythm unchanged).
-Upload and deployment are NOT seen on Cloudflare yet: they run on `main` once the secrets exist.
+Upload, deployment and a full download seen on Cloudflare on 2026-11-03 (PROGRESS, Session 7).
 
 ## Limits checked (Cloudflare docs, read 2026-11-02)
 - R2 (`r2/platform/limits`, updated 2026-10-30): object up to 5 TiB; one request (a single PUT or
@@ -72,5 +72,7 @@ Upload and deployment are NOT seen on Cloudflare yet: they run on `main` once th
   `curl -C -` passes `sha256sum -c`, 304 on `If-None-Match`. `tools/r2-upload.sh` against
   `rclone serve s3`: multipart in equal parts, read back with `--download`, old folder (other file name) deleted,
   stray object warned, size guard fails the step, missing secrets skip, partial secrets fail.
-- NOT seen: a real upload to R2, the 416 answer (local R2 ignores an unsatisfiable range), the
-  Worker on Cloudflare, the 5 GB download through it, the weekly run.
+- Seen on Cloudflare (2026-11-03): upload and read-back from `iso.yml`, `tests/worker-check.sh`,
+  416/206/304, a full download through the Worker passing `sha256sum -c` and `cosign verify-blob`.
+  The edge answers 400 to `..` path segments before the Worker runs.
+- NOT seen: the weekly run deleting the previous release.
