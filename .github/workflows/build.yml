@@ -2,13 +2,21 @@ name: build
 
 # Daily: build, check, publish :testing, boot test, then :stable (same digest) or a drift pull
 # request. Pull requests from this repository only build, check and boot test (no push, no
-# issue): they answer "does CI still work". All logic lives in tools/.
+# issue): they answer "does CI still work". A pull request that only touches files the image does
+# not contain (docs, root Markdown, the download page Worker) skips it (ADR 0032). All logic lives
+# in tools/.
 on:
   schedule:
     - cron: '17 4 * * *'
   push:
     branches: [main]
   pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - 'worker/**'
+      - 'tests/worker-check.sh'
+      - '.github/workflows/worker.yml'
   workflow_dispatch:
 
 concurrency:
