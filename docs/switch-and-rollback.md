@@ -15,8 +15,11 @@ Logs go to `../work/` (next to the clone); the terminal only shows the useful li
 ```sh
 sudo tools/switch.sh inventory
 ```
-It must say `layered packages: none` (bootc refuses to switch a system with rpm-ostree layered
-packages: remove them first). It also says whether Plasma Setup was completed.
+It must say `layered packages: none`: the script refuses a system with rpm-ostree layered
+packages, because `bootc switch` drops them without a word (seen in a VM, ADR 0035; `bootc
+upgrade` refuses them). Remove them first. It also says whether Plasma Setup was completed.
+A swarf-os machine with audio layered stays on an older image with `rpm-ostree rebase` instead
+(README, "Rollback").
 
 ## 2. Switch
 ```sh

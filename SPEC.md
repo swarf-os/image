@@ -2,6 +2,7 @@
 
 Draft 12 · 2026-10-29 · names decided (`swarf-os`). Fedora bootc path; the Arch version is kept as `claude/SPEC-arch-backup.md` in the planning project (fallback if this path becomes too hard). Kyanite archive (read for draft 8): `fbmguerin/archive-kyanite-os-fedora-custom`.
 Sources: the Kyanite ADRs, Containerfile, lists and roadmap (read 2026-10-29), plus two Arch/distro comparison reports. Items marked (to verify) were not checked against a primary source in this draft.
+Draft 14 (2026-11-05, step 9): README written (ADR 0036); audio set of six packages and its rollback consequence (ADR 0035).
 Draft 13 (2026-11-03, step 7): Cloudflare decided (ADR 0029 to 0031): one ISO in R2, not two (free tier), release folders `YYYYMMDD-HHMM/`, Worker on `workers.dev`, client-side visual word; `SHA256SUMS` stays keyless (ADR 0023).
 Draft 12 (2026-10-29, step 5): CI decided (ADR 0013 to 0017): public GHCR image, base `fedora-bootc:latest` with a pull request on any manifest change including `VERSION_ID`, manifest gate without versions or digests.
 Draft 11 (2026-10-29, step 3): settings decided (ADR 0003 to 0008); firewall is a closed `swarf` zone, not Fedora's `public`; Discover reviews (ODRS) deferred to step 4.
@@ -94,7 +95,7 @@ FROM ${BASE}
 - Flathub only (static remote in `/usr/share/flatpak/remotes.d/`), system-wide. No Fedora Flatpak repo.
 - User apps in Flatpak: Waterfox, VLC.
 - **Not preinstalled, installed on demand** (ADR 0027, replaces the offline copy of ADR 0021): the ISO carries no Flatpak. Two generic launchers pinned first in the Plasma menu, "Internet" and "Media player", open an unprivileged plain-English script in Konsole that asks once and installs Waterfox or VLC from Flathub, system-wide. Launchers and script are copied from `/etc/skel` into new homes; a launcher is deleted once its app is installed (its favourite then starts the app) and the script deletes itself once both are. Polkit is Flatpak's default: an admin (`wheel`) installs without a password, another user is asked for an admin password. Same on the live ISO, with a RAM warning. Installed apps then update from Flathub (to verify).
-- No audio server by default. Audio is a documented command (layering `pipewire wireplumber pipewire-pulseaudio plasma-pa` with `rpm-ostree`, after removing them from the blacklist for that machine). No `ujust`.
+- No audio server by default. Audio is a documented command (layering `pipewire wireplumber pipewire-pulseaudio pipewire-alsa plasma-pa alsa-sof-firmware` with `rpm-ostree`; the blacklist is a build-time check and needs no change on the machine). A layered machine stays back with `rpm-ostree rebase`, not `bootc switch`, which drops the layer (ADR 0035). No `ujust`.
 
 ## Updates (transparent, no automatic reboot)
 - System and Flatpak: Discover unattended updates, on by default, daily (Kyanite ADR 0008: `PlasmaDiscoverUpdates` with `UseUnattendedUpdates=true`, plus `fedora-release-ostree-desktop` for the polkit rule). It stages the new image; it never reboots.
@@ -170,7 +171,7 @@ FROM ${BASE}
 ## Open questions
 - Availability of `swarf-os` (GHCR package, search engines, trademark registers). If it fails, only the ISO prefix and the image name change; the organization can be renamed.
 - (closed, step 5, ADR 0014: follow `latest`, pull request on change.)
-- Licence: MIT or Apache-2.0.
+- Licence: MIT or Apache-2.0 (`LICENSE` is MIT since step 1; to confirm).
 - (closed, step 4, ADR 0011: no reminder.)
 - (closed, step 5, ADR 0013: GHCR image public.)
 - (closed, ADR 0023 and step 7: `SHA256SUMS` signed keyless.)
