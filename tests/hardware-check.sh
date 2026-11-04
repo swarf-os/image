@@ -74,7 +74,8 @@ img=/usr/lib/modules/$(uname -r)/initramfs.img
   run cat /etc/crypttab
   printf '\n### LUKS prompt keymap = the initramfs one (ADR 0022)\n'
   run lsinitrd -f etc/vconsole.conf "$img"
-  echo "(no vconsole.conf in the initramfs = US keymap)"
+  echo "(no vconsole.conf in the initramfs: the prompt follows vconsole.keymap= on the cmdline, else US)"
+  run cat /var/log/swarf-keymap.log          # the installer %post that adds vconsole.keymap=
   lsinitrd -m "$img" 2>&1 | grep -x -e crypt -e i18n -e plymouth -e systemd-cryptsetup
   printf '\n### installer logs on the target\n'
   if [ -d /var/log/anaconda ]; then run ls -la /var/log/anaconda; tar czf "$D/anaconda-logs.tgz" -C /var/log anaconda
