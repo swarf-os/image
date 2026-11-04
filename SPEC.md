@@ -108,7 +108,7 @@ FROM ${BASE}
 ## Secure Boot, disk, encryption
 - Secure Boot with Fedora's chain, no MOK. CI blocks if `sbverify --list` on `vmlinuz` does not show Fedora's signature.
 - Full-disk LUKS through the installer (passphrase). The initramfs must keep the `crypt` module (checked in CI).
-- No GRUB password. The LUKS prompt keymap is the initramfs one (US by default), not the installer layout (checked on the VM, docs/adr/0022); recheck on the hardware.
+- No GRUB password. The LUKS prompt uses the installer keyboard layout (`vconsole.keymap=` karg set by the ISO kickstart, docs/adr/0037).
 - Targets: Intel NUC and Framework 13 Pro; Secure Boot on in the test VM.
 
 ## ISO and installer

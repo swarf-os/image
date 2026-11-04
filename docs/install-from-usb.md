@@ -11,8 +11,7 @@ Status: **do not use an ISO built before step 6b.** Those ISOs copy Flatpaks in 
 
 ## Installer choices
 
-- Keep English and the US keyboard (the defaults). The LUKS prompt at boot always uses the US keymap, whatever you pick here (ADR 0022).
-- Choose a LUKS passphrase you can type on a US layout.
+- Pick your language and keyboard layout: the LUKS prompt at boot uses that layout (ADR 0037).
 - Time zone and language are asked again by Plasma Setup on first boot; the installer does not guess them from the network (ADR 0026).
 
 ## NUC: only the SATA SSD
