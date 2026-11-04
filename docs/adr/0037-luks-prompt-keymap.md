@@ -21,9 +21,12 @@ wanted US keys (seen 2026-11-04; the maintainer needed a converter to unlock). S
   XKB `fr` symbols, and the `i18n` dracut module.
 
 ## Decision
-The ISO kickstart gets a `%post` that does what Anaconda does on ostree installs: read `KEYMAP` from
-the installed `/etc/vconsole.conf` and run `ostree admin instutil set-kargs --merge
-vconsole.keymap=<KEYMAP>` when it is not `us` or empty. Log in `/var/log/swarf-keymap.log` (read by
+The ISO kickstart gets a `%post --nochroot` that does what Anaconda does on ostree installs: read
+`KEYMAP` from the deployment's `/etc/vconsole.conf` and run `ostree admin instutil set-kargs
+--sysroot=/mnt/sysimage --merge vconsole.keymap=<KEYMAP>` from the live system (built from the same
+image, same ostree) when it is not `us` or empty. Not chrooted: the bootc flow does not bind the
+physical root on the deployment's `/sysroot` (the ostree flow does, `installation.py:329`), and a
+chrooted `ostree admin` failed with "No such file or directory" (seen, below). Log in `/var/log/swarf-keymap.log` (read by
 `tests/hardware-check.sh`).
 - Plain `vconsole.keymap=` (not `rd.`): the same karg Fedora's ostree installs get.
 - No `--erroronfail`: if it fails the prompt stays US (the old behaviour) and the install goes on;
@@ -34,5 +37,7 @@ vconsole.keymap=<KEYMAP>` when it is not `us` or empty. Log in `/var/log/swarf-k
 ## Seen / not seen
 - SEEN on the Packard Bell (2026-11-04): `rpm-ostree kargs --append=vconsole.keymap=fr-oss` (its
   `vconsole.conf` says `KEYMAP=fr`), reboot, the passphrase typed in AZERTY unlocks.
-- NOT seen yet: the `%post` on a built ISO (VM install with the French keyboard chosen in the
+- SEEN FAILING (2026-11-04, VM, PR #39 ISO with the first, chrooted `%post`): `vconsole.conf` had
+  `KEYMAP="fr-oss"`, `set-kargs` failed "error: No such file or directory", no karg, US prompt.
+- NOT seen yet: the `--nochroot --sysroot` `%post` on a built ISO (VM install with the French keyboard chosen in the
   WebUI); the karg kept after a Discover update (new deployment).
