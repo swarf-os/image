@@ -31,6 +31,12 @@ The NUC has two disks. Install **only on the Samsung MZ7LN128 (about 128 GB; it 
 
 The system has no apps from Flathub at first. The menu shows "Internet" and "Media player" at the top of the favourites: click one, a terminal window opens, answer `y`, and the app is downloaded from Flathub (a network is needed; Wi-Fi from the network icon). The launcher then becomes the app itself. An admin account is not asked for a password. The same works in the live session, but the app lives in RAM until the restart.
 
+## After install: record what you see
+
+On the installed system, as the Plasma Setup account, with a second USB stick mounted (optional):
+`curl -fsSLO https://raw.githubusercontent.com/swarf-os/image/main/tests/hardware-check.sh && bash hardware-check.sh after-login`.
+It asks the sudo password once and writes `~/swarf-check-*.tgz` (copied to the stick if one is mounted). Run it again with the label `after-apps` once both launchers have been clicked.
+
 ## If the install fails
 
 Do not reboot: the logs live in memory. In the live session, plug a second USB stick (never the ISO stick, never the target disk), open it once in Dolphin so it mounts, then run this in Konsole (the logs under `/tmp` are readable by root only). It prints `COPIE-OK` when the archive `swarf-diag.tgz` is on the stick:
