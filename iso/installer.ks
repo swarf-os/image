@@ -16,7 +16,12 @@ set -x
 cat /mnt/sysroot/etc/vconsole.conf
 km=$(sed -n 's/^KEYMAP="\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' /mnt/sysroot/etc/vconsole.conf)
 if [ -n "$km" ] && [ "$km" != us ]; then
-  ostree admin instutil set-kargs --sysroot=/mnt/sysimage --merge "vconsole.keymap=$km"
+  # /boot is read-only here ("mkdir(boot/loader.0): Read-only file system", seen in the VM):
+  # writable only for this command, then back as it was.
+  findmnt -no OPTIONS /mnt/sysimage/boot
+  mount -o remount,rw /mnt/sysimage/boot &&
+    ostree admin instutil set-kargs --sysroot=/mnt/sysimage --merge "vconsole.keymap=$km"
+  mount -o remount,ro /mnt/sysimage/boot
 fi
 grep -h '^options' /mnt/sysimage/boot/loader/entries/*.conf
 %end

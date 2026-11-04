@@ -24,7 +24,8 @@ wanted US keys (seen 2026-11-04; the maintainer needed a converter to unlock). S
 The ISO kickstart gets a `%post --nochroot` that does what Anaconda does on ostree installs: read
 `KEYMAP` from the deployment's `/etc/vconsole.conf` and run `ostree admin instutil set-kargs
 --sysroot=/mnt/sysimage --merge vconsole.keymap=<KEYMAP>` from the live system (built from the same
-image, same ostree) when it is not `us` or empty. Not chrooted: the bootc flow does not bind the
+image, same ostree) when it is not `us` or empty, with `/mnt/sysimage/boot` remounted read-write
+for that command only (it is read-only at `%post` time). Not chrooted: the bootc flow does not bind the
 physical root on the deployment's `/sysroot` (the ostree flow does, `installation.py:329`), and a
 chrooted `ostree admin` failed with "No such file or directory" (seen, below). Log in `/var/log/swarf-keymap.log` (read by
 `tests/hardware-check.sh`).
@@ -39,5 +40,10 @@ chrooted `ostree admin` failed with "No such file or directory" (seen, below). L
   `vconsole.conf` says `KEYMAP=fr`), reboot, the passphrase typed in AZERTY unlocks.
 - SEEN FAILING (2026-11-04, VM, PR #39 ISO with the first, chrooted `%post`): `vconsole.conf` had
   `KEYMAP="fr-oss"`, `set-kargs` failed "error: No such file or directory", no karg, US prompt.
-- NOT seen yet: the `--nochroot --sysroot` `%post` on a built ISO (VM install with the French keyboard chosen in the
+- SEEN FAILING (2026-11-04, VM, second ISO, `--nochroot --sysroot`): `error: mkdir(boot/loader.0):
+  Read-only file system`.
+- SEEN in that VM (debug shell): `/boot` and `/sysroot` remounted rw, `ostree admin instutil
+  set-kargs --merge vconsole.keymap=fr-oss` → "Bootloader updated", karg in the entry; after reboot
+  `asdfgh` typed at AZERTY positions unlocks.
+- NOT seen yet: the `%post` with the remount on a built ISO (VM install with the French keyboard chosen in the
   WebUI); the karg kept after a Discover update (new deployment).
