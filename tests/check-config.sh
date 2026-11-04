@@ -35,7 +35,11 @@ check "os-release VARIANT_ID" custom "$(. /usr/lib/os-release && echo "$VARIANT_
 check "os-release ID" fedora "$(. /usr/lib/os-release && echo "$ID")"
 NetworkManager --print-config 2>&1 | grep -A1 '^\[connectivity\]' | grep -q '^enabled=false' ||
     { echo "FAIL NetworkManager connectivity not disabled"; fail=1; }
-check "authselect" "Current configuration is valid." "$(authselect check 2>&1)"
+# Fedora 44: "Current configuration is valid."; Fedora 45: "Current authselect configuration is
+# valid." (seen in CI, 2026-11-04, fedora-bootc 45.20261104.0).
+a=$(authselect check 2>&1)
+case $a in "Current configuration is valid." | "Current authselect configuration is valid.") ;;
+    *) check "authselect" "Current [authselect ]configuration is valid." "$a" ;; esac
 check "failed units" 0 "$(systemctl --failed --no-legend 2>&1 | wc -l)"
 
 export XDG_CONFIG_DIRS=/etc/xdg:/usr/share/swarf/xdg:/usr/share/kde-settings/kde-profile/default/xdg

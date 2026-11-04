@@ -49,8 +49,8 @@ Status: the current ISO is installed in a VM only; real-hardware installs are st
    ```
 3. **Write the stick** with Fedora Media Writer. Secure Boot can stay on.
 4. **Install.** The installer (Anaconda WebUI) only handles the disk and full-disk encryption
-   (LUKS passphrase). Keep a passphrase you can type on a **US keyboard**: the passphrase prompt
-   at boot always uses the US layout, whatever you choose in the installer.
+   (LUKS passphrase). The passphrase prompt at boot uses the keyboard layout chosen in the
+   installer (docs/adr/0037).
 5. **First boot:** Plasma Setup asks for language, time zone and the account. It proposes
    `America/New_York` as time zone (the installer does not guess from the network): change it.
 6. **Apps:** the menu shows "Internet" and "Media player" at the top of the favourites. Click

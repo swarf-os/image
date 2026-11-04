@@ -11,8 +11,7 @@ Status: **do not use an ISO built before step 6b.** Those ISOs copy Flatpaks in 
 
 ## Installer choices
 
-- Keep English and the US keyboard (the defaults). The LUKS prompt at boot always uses the US keymap, whatever you pick here (ADR 0022).
-- Choose a LUKS passphrase you can type on a US layout.
+- Pick your language and keyboard layout: the LUKS prompt at boot uses that layout (ADR 0037).
 - Time zone and language are asked again by Plasma Setup on first boot; the installer does not guess them from the network (ADR 0026).
 
 ## NUC: only the SATA SSD
@@ -30,6 +29,12 @@ The NUC has two disks. Install **only on the Samsung MZ7LN128 (about 128 GB; it 
 ## After install: Waterfox and VLC
 
 The system has no apps from Flathub at first. The menu shows "Internet" and "Media player" at the top of the favourites: click one, a terminal window opens, answer `y`, and the app is downloaded from Flathub (a network is needed; Wi-Fi from the network icon). The launcher then becomes the app itself. An admin account is not asked for a password. The same works in the live session, but the app lives in RAM until the restart.
+
+## After install: record what you see
+
+On the installed system, as the Plasma Setup account, with a second USB stick mounted (optional):
+`curl -fsSLO https://raw.githubusercontent.com/swarf-os/image/main/tests/hardware-check.sh && bash hardware-check.sh after-login`.
+It asks the sudo password once and writes `~/swarf-check-*.tgz` (copied to the stick if one is mounted). Run it again with the label `after-apps` once both launchers have been clicked.
 
 ## If the install fails
 
