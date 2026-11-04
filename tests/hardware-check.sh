@@ -7,6 +7,7 @@
 # Writes swarf-check-LABEL-DATE.tgz in ~ and copies it to the first mounted USB stick, if any.
 # Each section names the open item it answers (PROGRESS.md, step 6 and 6b).
 set -uo pipefail
+[ "$(id -u)" = 0 ] && { echo "Run it as your own account, without sudo (it asks for sudo itself)."; exit 1; }
 label=${1:-run}
 name=swarf-check-$label-$(date +%Y%m%d-%H%M)
 W=$(mktemp -d)
@@ -87,6 +88,9 @@ ROOT
 
 tar czf "$HOME/$name.tgz" -C "$W" "$name" && rm -rf "$W"
 echo "archive: $HOME/$name.tgz"
-stick=$(find /run/media/"$(id -un)" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | head -n 1)
-if [ -n "$stick" ]; then cp "$HOME/$name.tgz" "$stick" && sync && echo "COPIE-OK $stick"
-else echo "no USB stick mounted: copy the archive yourself"; fi
+# First mounted stick that is writable and not an ISO (an install stick is read-only iso9660).
+stick=$(findmnt -rn -o TARGET,FSTYPE,OPTIONS | awk -v d="/run/media/$(id -un)/" \
+  'index($1, d) == 1 && $2 != "iso9660" && $3 ~ /(^|,)rw(,|$)/ {print $1; exit}')
+stick=$(printf '%b' "$stick")   # findmnt -r escapes spaces as \x20
+if [ -n "$stick" ] && cp "$HOME/$name.tgz" "$stick/" && sync; then echo "COPIE-OK $stick"
+else echo "no writable USB stick mounted: copy $HOME/$name.tgz yourself"; fi
