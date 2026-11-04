@@ -16,7 +16,9 @@ findmnt -R /mnt/sysimage
 cat /mnt/sysroot/etc/vconsole.conf
 km=$(sed -n 's/^KEYMAP="\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' /mnt/sysroot/etc/vconsole.conf)
 if [ -n "$km" ] && [ "$km" != us ]; then
-  mount --rbind /mnt/sysimage /mnt/sysroot/sysroot &&
+  # rslave: the live system's mounts are shared; without it the umount -R below would also
+  # unmount /mnt/sysimage/boot under Anaconda (core/path.py set_system_root does make-rprivate).
+  mount --rbind /mnt/sysimage /mnt/sysroot/sysroot && mount --make-rslave /mnt/sysroot/sysroot &&
     chroot /mnt/sysroot ostree admin instutil set-kargs --merge "vconsole.keymap=$km"
   umount -R /mnt/sysroot/sysroot
 fi
