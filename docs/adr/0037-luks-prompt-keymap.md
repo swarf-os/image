@@ -30,6 +30,13 @@ physical root on the deployment's `/sysroot` (the ostree flow does, `installatio
 chrooted `ostree admin` failed with "No such file or directory" (seen, below). Log in `/var/log/swarf-keymap.log` (read by
 `tests/hardware-check.sh`).
 - Plain `vconsole.keymap=` (not `rd.`): the same karg Fedora's ostree installs get.
+- 2026-11-05: `/boot` goes back to the state `findmnt` read before the remount (it was always set
+  `ro`); the state is written to the log. `--replace=vconsole.keymap=` instead of a plain argument:
+  ostree (`ot-admin-instutil-builtin-set-kargs.c`, main, read 2026-11-05) appends a plain argument
+  even when the key is there, `--replace` replaces it or adds it. Anaconda 45.30 (tag
+  `anaconda-45.30`, the `f45` branch version, read 2026-11-05) still passes only
+  `bootloader.GetArguments()` to `bootc install` (`DeployBootcTask`), no keymap: no duplicate is
+  expected, `--replace` covers a later Anaconda that adds one.
 - No `--erroronfail`: if it fails the prompt stays US (the old behaviour) and the install goes on;
   an aborted install (ADR 0027) is worse.
 - A machine already installed gets it by hand: `sudo rpm-ostree kargs --append=vconsole.keymap=fr`.

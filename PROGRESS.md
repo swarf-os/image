@@ -170,3 +170,6 @@ Steps come from `SPEC.md` (section "Steps").
   - Drift PR #41 merged by the maintainer (2026-11-05 18:33 UTC): `promote` succeeded, `:stable` = `sha256:ab1b9b75…` (skopeo). The main build that followed (`0abe85a`, no drift) promoted `:stable` to `sha256:d75e577b…` (`45.20261105.0`). Installed machines move to F45 at their next update.
   - Host clean-up (maintainer agreed): VM `swarf-dev` and its disk, the ISOs in `work/step6/` (top level, `pr39/`, `pr39b/`) and `work/step6b/iso-out/`, all podman images; `/var/home` 14G → 67G free. Kept: `work/step6/pr39c/` (working F44 ISO), VM `swarf-iso`.
   - NOT seen: the boot splash after unlocking, Overview off, the updates page, the karg after a Discover update itself (the switch is a new deployment by the same ostree path), the F45 ISO.
+- Session 10 (2026-11-05, in progress): loose ends, branch `iso-f45`.
+  - Checked 18:58 UTC: no open PR or issue; `:stable` = `sha256:d75e577b…` (`45.20261105.0`).
+  - `iso/installer.ks`: `/boot` goes back to the state read by `findmnt` (was always `ro`), state and `anaconda-core`/`ostree` versions logged, BLS options logged before and after, `--replace=vconsole.keymap=` (ADR 0037). Anaconda 45.30 bootc flow read: no keymap karg of its own. NOT yet seen on a built ISO.
