@@ -1,4 +1,4 @@
-# Installing from a USB stick (NUC and Framework)
+# Installing from a USB stick
 
 Status: **do not use an ISO built before step 6b.** Those ISOs copy Flatpaks in a `%post` that stops the install on real hardware (first real install, Packard Bell laptop, 2026-11-02, ADR 0027). Use a CI ISO from `main` built after step 6b and after the "Manifest drift" PR that follows it is merged (so `:stable` has the Wi-Fi firmware and `upower`). Not an ISO from a pull request run: on a pull request `iso.yml` builds from the published `:stable`, without the pull request's image changes. The step 6b ISO is seen in a VM only (see PROGRESS.md).
 
@@ -14,17 +14,11 @@ Status: **do not use an ISO built before step 6b.** Those ISOs copy Flatpaks in 
 - Pick your language and keyboard layout: the LUKS prompt at boot uses that layout (ADR 0037).
 - Time zone and language are asked again by Plasma Setup on first boot; the installer does not guess them from the network (ADR 0026).
 
-## NUC: only the SATA SSD
-
-The NUC has two disks. Install **only on the Samsung MZ7LN128 (about 128 GB; it was `sdb`, but letters can change when booting from USB: go by model and size)**. **Never on the M.2 disk: it holds Kinoite**, the machine in use.
-
-- In the installer's storage step, tick only that disk and untick the other one. Check the model name and size on screen before clicking Install.
-- The boot menu (the boot-menu key shown at power-on) may show a "Fedora" entry from Kinoite. The new system will also be called "Fedora" in the firmware list: after install, check which disk each entry points to before choosing a default.
-
-## Framework
+## Boot and disk
 
 - Boot the stick from the one-time boot menu (the key shown at power-on).
-- Single disk: erase it only if nothing on it is needed.
+- In the installer's storage step, tick only the target disk (go by model and size, not by `sda`/`sdb`: letters can change when booting from USB) and untick every other disk. Everything on the target disk is erased.
+- Another installed Fedora shows up as "Fedora" in the firmware boot list, like the new system: after install, check which disk each entry points to before choosing a default.
 
 ## After install: Waterfox and VLC
 

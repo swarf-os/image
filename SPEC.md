@@ -109,7 +109,7 @@ FROM ${BASE}
 - Secure Boot with Fedora's chain, no MOK. CI blocks if `sbverify --list` on `vmlinuz` does not show Fedora's signature.
 - Full-disk LUKS through the installer (passphrase). The initramfs must keep the `crypt` module (checked in CI).
 - No GRUB password. The LUKS prompt uses the installer keyboard layout (`vconsole.keymap=` karg set by the ISO kickstart, docs/adr/0037).
-- Targets: Intel NUC and Framework 13 Pro; Secure Boot on in the test VM.
+- Target: the Packard Bell laptop (Secure Boot that cannot be turned off); Secure Boot on in the test VM. NUC and Framework dropped (ADR 0040).
 
 ## ISO and installer
 - ISO with the image embedded (offline, fast install), rebuilt weekly from `:stable`.
@@ -144,7 +144,7 @@ FROM ${BASE}
 
 ## Machines
 - Build/test host: Intel NUC (i5-8259U, 16 GB), Fedora Kinoite. Rootless `podman build`.
-- Targets: Intel NUC, Framework 13 Pro. A Packard Bell laptop (Intel AX101 Wi-Fi) served for the first real install (2026-11-02) and is the machine switched from Kinoite in step 8 (`tools/switch.sh`, ADR 0033), before its ISO test.
+- Target: the Packard Bell laptop (Intel AX101 Wi-Fi; ADR 0040, NUC and Framework dropped). It served for the first real install (2026-11-02) and is the machine switched from Kinoite in step 8 (`tools/switch.sh`, ADR 0033), before its ISO test.
 - Test VM: Fedora Cloud / bootc VM with OVMF Secure Boot and TPM.
 
 ## Agent rules (→ AGENTS.md, < 100 lines)
@@ -162,7 +162,7 @@ FROM ${BASE}
 3. Config: telemetry off, services, firewall, KWallet off, quiet defaults.
 4. Update behaviour: Discover updates Flatpak and system, staged, no password, no reboot; decide the reboot reminder.
 5. CI: daily build, manifest check, boot test, `:testing` → `:stable`, issue on failure.
-6. ISO: Titanoboa, Anaconda WebUI, LUKS, keymap check, Plasma Setup at first boot; install from USB on the NUC and the Framework (with the step 6b ISO).
+6. ISO: Titanoboa, Anaconda WebUI, LUKS, keymap check, Plasma Setup at first boot; install from USB on the Packard Bell (ADR 0040).
 6b. Apps on demand and laptop hardware: remove the embedded Flatpaks and their `%post`; "Internet" and "Media player" launchers pinned in the menu, plain-English script in Konsole installing Waterfox or VLC, no privilege of its own (polkit decides: no password for the admin account, ADR 0027); Intel Wi-Fi firmware (`iwlwifi-mvm-firmware`) and `upower` in the image (ADR 0028).
 7. Cloudflare: R2 bucket, Worker, download page with the visual password, upload from CI.
 8. Switch the real machine; rollback tested before needing it.

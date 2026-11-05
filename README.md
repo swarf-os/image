@@ -57,7 +57,7 @@ Status: the current ISO is installed in a VM only; real-hardware installs are st
    one, answer `y` in the terminal that opens, and Waterfox or VLC is installed from Flathub
    (a network is needed). The launcher then becomes the app.
 
-Details, the NUC's two-disk trap and what to do if the install fails:
+Details, choosing the disk and what to do if the install fails:
 [docs/install-from-usb.md](docs/install-from-usb.md).
 
 ### Switch an existing Fedora Kinoite (keeps the account, `/home` and Flatpak apps)
