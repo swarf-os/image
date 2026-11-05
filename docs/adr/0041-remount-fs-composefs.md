@@ -1,6 +1,6 @@
 # 0041 — `systemd-remount-fs` fails on the composefs root
 
-Date: 2026-11-05. Status: proposed (no image change until the maintainer agrees).
+Date: 2026-11-05. Status: accepted (maintainer, 2026-11-05: option 1).
 
 ## Problem
 On every installed machine `systemd-remount-fs.service` fails: "mount: /: fsconfig() failed:
@@ -23,7 +23,7 @@ It is the only failed unit. Nothing else breaks, but a red unit at each boot hid
   `rootflags=subvol=/root` only (`findmnt /sysroot` on the Packard Bell shows no `compress`).
 
 ## Options
-1. (Recommended) Image drop-in `/usr/lib/systemd/system/systemd-remount-fs.service.d/` with
+1. (Chosen) Image drop-in `/usr/lib/systemd/system/systemd-remount-fs.service.d/` with
    `Environment=LIBMOUNT_FORCE_MOUNT2=always` (`mount.8`: forces the classic `mount(2)`): overlayfs
    then ignores the options as it always did. Reaches every installed machine at its next update,
    the Packard Bell included; only this unit is affected; no fstab edit. Workaround given in
@@ -38,5 +38,14 @@ It is the only failed unit. Nothing else breaks, but a red unit at each boot hid
   overlay: No changes allowed in reconfigure`; `sudo env LIBMOUNT_FORCE_MOUNT2=always mount / -o
   remount` succeeds and `/` stays `ro` (composefs options unchanged).
 
+- 2026-11-05, same VM: the option 1 file as an `/etc/systemd/system/systemd-remount-fs.service.d/`
+  drop-in, `systemctl daemon-reload` and `restart`: `is-failed` says `active`, `/` stays `ro`. After a
+  reboot (LUKS unlocked in AZERTY): `active`, `Environment=LIBMOUNT_FORCE_MOUNT2=always`, journal
+  "Finished systemd-remount-fs.service", `/` `ro`, `vconsole.keymap=fr-oss` still on `/proc/cmdline`.
+
+## Decision
+Option 1: `system/usr/lib/systemd/system/systemd-remount-fs.service.d/50-swarf-composefs.conf`.
+Remove it once util-linux or overlayfs accept the remount upstream (systemd #39558, bootc #971).
+
 ## Not seen
-A runtime drop-in for the unit and `systemctl restart systemd-remount-fs`, then a reboot with it.
+The image file itself on an installed machine (VM after an update, then the Packard Bell).
