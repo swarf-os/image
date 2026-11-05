@@ -24,7 +24,13 @@ longer if Fedora stops publishing for a while.
    base (`45.20261106.0`) is still newer than `45.20261105.0.57`. `run_number` stays small (no int
    overflow, unlike `run_id`). `:stable` is a retag of the tested image, so it keeps the label.
    Nothing in `tools/` reads this label.
+   Edge case: re-running a workflow run keeps its `run_number`, so a re-run that publishes a new
+   digest gets the same label and Discover misses it; accepted (a new push or the daily run fixes it).
 2. Keep things as they are and write in the README that fixes arrive with the next Fedora version.
 
+## Seen
+`journalctl --user -b` in `swarf-iso`: `DiscoverNotifier[3379]: No new version found` (21:59 UTC+1),
+`plasma-discover[5107]: No new version found` (22:49, 22:50, the two checks above).
+
 ## Not seen
-Discover's own log line ("No new version found"); option 1 in a VM.
+Option 1 in a VM.
