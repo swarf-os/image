@@ -27,5 +27,11 @@ light. The maintainer says Fedora does the same.
    that KDE should own.
 3. Ship a dark greeter by default. Wrong for users who pick the light theme.
 
+## Seen
+- 2026-11-05, VM `swarf-iso45` (F45 ISO from PR #48), dark theme chosen in Plasma Setup, after a
+  reboot: the login screen has the blurred wallpaper (dark), white text, but the password field and
+  the submit button are light (white fill). The session is dark. This matches a greeter on the light
+  default colours.
+
 ## Not seen
 The button's effect in the VM; the exact French name of the System Settings module.
