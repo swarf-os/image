@@ -57,4 +57,10 @@ chrooted `ostree admin` failed with "No such file or directory" (seen, below). L
   `fr` and `asdfgh` typed at AZERTY positions unlocks (confirmed by the maintainer).
 - SEEN (2026-11-05, same VM): `bootc switch` to the F45 image (new deployment), reboot: the prompt
   shows `fr`, `asdfgh` at AZERTY positions unlocks, `/proc/cmdline` keeps `vconsole.keymap=fr-oss`.
-- NOT seen yet: the same after a Discover update (same ostree deployment path), the F45 ISO.
+- SEEN (2026-11-05, new VM `swarf-iso45`, F45 ISO from PR #48 `cd6b87b`, anaconda-core 45.30-1,
+  ostree 2026.4-1): BLS options before `%post` have no `vconsole.keymap` (Anaconda 45 does not add
+  it), after `%post` exactly one `vconsole.keymap=fr-oss`; the prompt shows `fr`, `asdfgh` at AZERTY
+  positions unlocks; `/proc/cmdline` has one `vconsole.keymap=fr-oss`. `/boot` was `ro` at `%post`
+  and went back to `ro`. `/boot` is mounted twice on the same path there, so `findmnt` prints two
+  lines; the whole-word `ro` match still works.
+- NOT seen yet: the same after a Discover update (same ostree deployment path).
