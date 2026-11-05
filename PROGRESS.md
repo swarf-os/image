@@ -12,6 +12,7 @@ Steps come from `SPEC.md` (section "Steps").
 - [x] 7. Cloudflare: R2 bucket, Worker, download page with the visual password, upload from CI. (ADR 0029, 0030, 0031; seen on Cloudflare 2026-11-03: https://get.swarf-os.workers.dev; the weekly scheduled upload NOT seen yet, see Session 7)
 - [x] 8. Switch the real machine; rollback tested before needing it. (ADR 0033, 0034; seen on the Packard Bell 2026-11-03/04: switch, rollback to Kinoite, return; see Session 8)
 - [x] 9. README: install, update behaviour, audio, rollback, and the frank Fedora-logo statement described under Identity. (ADR 0035, 0036; see Session 9)
+- [ ] 10. Loose ends: the F45 ISO tested in the VM before it is published (LUKS keymap, one `vconsole.keymap`, `/boot` state at `%post`); the weekly ISO upload and the budget alert seen; a real Discover update with the karg kept; sound and the `after-apps` record on the Packard Bell; `systemd-remount-fs` failing on composefs; light login screen with the dark theme; the Discover LVFS dialog gone once KDE's fix lands (ADR 0039).
 
 ## Sessions
 - Session 0 : amorçage

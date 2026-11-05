@@ -167,6 +167,7 @@ FROM ${BASE}
 7. Cloudflare: R2 bucket, Worker, download page with the visual password, upload from CI.
 8. Switch the real machine; rollback tested before needing it.
 9. README: install, update behaviour, audio, rollback, and the frank Fedora-logo statement described under Identity.
+10. Loose ends: the F45 ISO tested in the VM before it is published (LUKS keymap, one `vconsole.keymap`, `/boot` state at `%post`); the weekly ISO upload and the budget alert seen; a real Discover update with the karg kept; sound and the `after-apps` record on the Packard Bell; `systemd-remount-fs` failing on composefs; light login screen with the dark theme; the Discover LVFS dialog gone once KDE's fix lands (ADR 0039).
 
 ## Open questions
 - Availability of `swarf-os` (GHCR package, search engines, trademark registers). If it fails, only the ISO prefix and the image name change; the organization can be renamed.
