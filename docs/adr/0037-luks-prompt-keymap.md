@@ -48,4 +48,6 @@ chrooted `ostree admin` failed with "No such file or directory" (seen, below). L
 - SEEN (2026-11-05, VM, third ISO `696760a`): WebUI install, French language, keyboard `fr (oss)`
   (the encryption page says it will be used at boot), passphrase `asdfgh`; at boot the prompt shows
   `fr` and `asdfgh` typed at AZERTY positions unlocks (confirmed by the maintainer).
-- NOT seen yet: the karg kept after a Discover update (new deployment).
+- SEEN (2026-11-05, same VM): `bootc switch` to the F45 image (new deployment), reboot: the prompt
+  shows `fr`, `asdfgh` at AZERTY positions unlocks, `/proc/cmdline` keeps `vconsole.keymap=fr-oss`.
+- NOT seen yet: the same after a Discover update (same ostree deployment path), the F45 ISO.
