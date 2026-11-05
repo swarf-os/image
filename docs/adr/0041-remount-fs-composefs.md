@@ -32,7 +32,11 @@ It is the only failed unit. Nothing else breaks, but a red unit at each boot hid
    needs a hand edit. Does not lose compression (already not applied).
 3. Wait for upstream (open for almost two years).
 
+## Seen
+- 2026-11-05, VM `swarf-iso45` (F45 ISO from PR #48, util-linux 2.42.4): `systemctl is-failed
+  systemd-remount-fs` says `failed`; `sudo mount / -o remount` fails with `fsconfig() failed:
+  overlay: No changes allowed in reconfigure`; `sudo env LIBMOUNT_FORCE_MOUNT2=always mount / -o
+  remount` succeeds and `/` stays `ro` (composefs options unchanged).
+
 ## Not seen
-None of the options tested yet. Test for option 1 in the VM, before any image change:
-`sudo env LIBMOUNT_FORCE_MOUNT2=always mount / -o remount; echo $?` (expect 0), then a runtime
-drop-in and `systemctl restart systemd-remount-fs`.
+A runtime drop-in for the unit and `systemctl restart systemd-remount-fs`, then a reboot with it.
