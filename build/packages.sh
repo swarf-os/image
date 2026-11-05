@@ -39,7 +39,8 @@ mapfile -t wanted < <(grep -vE '^#|^$' "$wl")
 mapfile -t left < <(section remove | installed)
 repos=()
 for glob in $(section repos); do
-    for file in /etc/yum.repos.d/*.repo; do
+    for file in /etc/yum.repos.d/*.repo /usr/share/dnf5/repos.d/*.repo; do
+        [ -e "$file" ] || continue
         name=$(basename "$file" .repo)
         # shellcheck disable=SC2254
         case $name in $glob) repos+=("$file") ;; esac
