@@ -213,7 +213,6 @@ efibootmgr.x86_64
 efivar-libs.x86_64
 egl-utils.x86_64
 elfutils-debuginfod-client.x86_64
-elfutils-default-yama-scope.noarch
 elfutils-libelf.x86_64
 elfutils-libs.x86_64
 emacs-filesystem.x86_64
@@ -222,8 +221,8 @@ exfatprogs.x86_64
 exiv2-libs.x86_64
 expat.x86_64
 f2fs-tools.x86_64
-f44-backgrounds-base.noarch
-f44-backgrounds-kde.noarch
+f45-backgrounds-base.noarch
+f45-backgrounds-kde.noarch
 fdk-aac-free.x86_64
 fedora-gpg-keys.noarch
 fedora-logos.noarch
@@ -241,6 +240,7 @@ file.x86_64
 filelight.x86_64
 filesystem.x86_64
 findutils.x86_64
+fips-provider.x86_64
 firewalld-filesystem.noarch
 firewalld.noarch
 flac-libs.x86_64
@@ -762,7 +762,6 @@ libavformat-free.x86_64
 libavif.x86_64
 libavutil-free.x86_64
 libb2.x86_64
-libbasicobjects.x86_64
 libblkid.x86_64
 libblockdev-crypto.x86_64
 libblockdev-fs.x86_64
@@ -786,7 +785,6 @@ libcap.x86_64
 libcbor.x86_64
 libchromaprint.x86_64
 libcloudproviders.x86_64
-libcollection.x86_64
 libcom_err.x86_64
 libcurl.x86_64
 libdaemon.x86_64
@@ -890,7 +888,6 @@ liboeffis.x86_64
 libogg.x86_64
 libopenjph.x86_64
 libopenmpt.x86_64
-libpath_utils.x86_64
 libpcap.x86_64
 libpciaccess.x86_64
 libpipeline.x86_64
@@ -906,7 +903,6 @@ libqalculate.x86_64
 libqmi.x86_64
 libqrtr-glib.x86_64
 librabbitmq.x86_64
-libref_array.x86_64
 librepo.x86_64
 libreport-filesystem.noarch
 librist.x86_64
@@ -1037,6 +1033,7 @@ ncurses.x86_64
 net-tools.x86_64
 netavark.x86_64
 nettle.x86_64
+nettle3.10.x86_64
 newt.x86_64
 nftables-services.noarch
 nftables.x86_64
@@ -1153,7 +1150,7 @@ popt.x86_64
 power-profiles-daemon.x86_64
 powerdevil.x86_64
 procps-ng.x86_64
-protobuf-c.x86_64
+protobuf3-c.x86_64
 psmisc.x86_64
 publicsuffix-list-dafsa.noarch
 pugixml.x86_64
@@ -1229,6 +1226,10 @@ re2.x86_64
 readline.x86_64
 realtek-firmware.noarch
 redhat-menus.noarch
+redhat-systemd-presets-common.noarch
+redhat-systemd-presets-desktop-atomic.noarch
+redhat-systemd-presets-desktop.noarch
+redhat-systemd-presets.noarch
 rit-meera-new-fonts.noarch
 rit-rachana-fonts.noarch
 rpm-build-libs.x86_64
@@ -1285,7 +1286,6 @@ sratom.x86_64
 srt-libs.x86_64
 sssd-client.x86_64
 stix-fonts.noarch
-sudo-python-plugin.x86_64
 sudo.x86_64
 svt-av1-libs.x86_64
 systemd-libs.x86_64
