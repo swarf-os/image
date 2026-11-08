@@ -544,6 +544,7 @@ hunspell.x86_64
 hwdata.noarch
 i2c-tools.x86_64
 ibus-libs.x86_64
+icu-tzdata.noarch
 iio-sensor-proxy.x86_64
 ilbc.x86_64
 ima-evm-utils-libs.x86_64
