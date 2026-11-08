@@ -91,6 +91,17 @@ the tool accepts an installed wallpaper package). Full procedure:
 - `bootc-fetch-apply-updates.timer` (it reboots without asking) and `rpm-ostreed-automatic.timer`
   are disabled. Do not use `dnf` on the machine. Firmware updates come through Discover (fwupd).
 - Not seen yet: a real update staged by Discover on an installed machine (PROGRESS.md).
+- Every published build has its own version, `<Fedora version>.<build number>` (for example
+  `45.20261108.0.63`), so Discover offers our fixes too, not only a new Fedora version
+  ([ADR 0043](docs/adr/0043-discover-sees-version-not-digest.md)).
+
+## Login screen theme
+
+The theme chosen in Plasma Setup (dark, for example) only applies to your session: the login screen
+stays light, as on Fedora. To bring your theme, keyboard layout and language to it: System Settings
+→ Login Screen → « Appliquer la configuration de Plasma... » → « Appliquer » (button name from
+the KDE translation, not yet tried on a machine)
+([ADR 0042](docs/adr/0042-login-screen-theme.md)).
 
 ## Audio
 
