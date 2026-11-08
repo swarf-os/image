@@ -31,9 +31,19 @@ longer if Fedora stops publishing for a while.
 ## Decision
 Option 1, in `tools/ci-build.sh` (CI only: a local build keeps the base label).
 
+Consequence: every push to `main` rebuilds and publishes, docs-only merges too, so each one becomes
+an update offered to every machine. Accepted by the maintainer (2026-11-08).
+
 ## Seen
 `journalctl --user -b` in `swarf-iso`: `DiscoverNotifier[3379]: No new version found` (21:59 UTC+1),
 `plasma-discover[5107]: No new version found` (22:49, 22:50, the two checks above).
 
+- 2026-11-08, option 1: PR #54 build log `version 45.20261108.0.135`; `:stable` `sha256:525f40a5…`
+  labelled `45.20261108.0.138`. VM `swarf-iso` booted on `45.20261108.0` (same Fedora base),
+  Discover journal: `Found new version: "45.20261108.0.138"`, then `started unattended update`
+  (18:23:17 UTC), without anyone clicking Update.
+  At 19:10 UTC `rpm-ostree status` listed `sha256:525f40a5…` `45.20261108.0.138` as the staged
+  deployment (booted still `fa9a3228…`), and Discover showed the restart-to-install page.
+
 ## Not seen
-Option 1 in a VM.
+The Packard Bell.

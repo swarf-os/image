@@ -43,9 +43,14 @@ It is the only failed unit. Nothing else breaks, but a red unit at each boot hid
   reboot (LUKS unlocked in AZERTY): `active`, `Environment=LIBMOUNT_FORCE_MOUNT2=always`, journal
   "Finished systemd-remount-fs.service", `/` `ro`, `vconsole.keymap=fr-oss` still on `/proc/cmdline`.
 
+- 2026-11-08, VM `swarf-iso` (no `/etc` copy), after a Discover update to `:stable`
+  `sha256:fa9a3228…` (`45.20261108.0`) and a reboot: `systemd-delta --type=extended` shows
+  `/usr/lib/systemd/system/systemd-remount-fs.service.d/50-swarf-composefs.conf`, `is-failed` says
+  `active`, `/` is `ro`, `vconsole.keymap=fr-oss` on `/proc/cmdline`, LUKS prompt `fr`.
+
 ## Decision
 Option 1: `system/usr/lib/systemd/system/systemd-remount-fs.service.d/50-swarf-composefs.conf`.
 Remove it once util-linux or overlayfs accept the remount upstream (systemd #39558, bootc #971).
 
 ## Not seen
-The image file itself on an installed machine (VM after an update, then the Packard Bell).
+The Packard Bell.
