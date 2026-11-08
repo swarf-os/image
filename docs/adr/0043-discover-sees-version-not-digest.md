@@ -1,6 +1,6 @@
 # 0043 — Discover only sees a new Fedora version, not our rebuilds
 
-Date: 2026-11-05. Status: proposed (no image change until the maintainer agrees).
+Date: 2026-11-05. Status: accepted (maintainer, 2026-11-08: option 1).
 
 ## Problem
 After #50 was merged, `:stable` moved to `sha256:03e5b64e…` (21:35 UTC). In the VM `swarf-iso`
@@ -27,6 +27,9 @@ longer if Fedora stops publishing for a while.
    Edge case: re-running a workflow run keeps its `run_number`, so a re-run that publishes a new
    digest gets the same label and Discover misses it; accepted (a new push or the daily run fixes it).
 2. Keep things as they are and write in the README that fixes arrive with the next Fedora version.
+
+## Decision
+Option 1, in `tools/ci-build.sh` (CI only: a local build keeps the base label).
 
 ## Seen
 `journalctl --user -b` in `swarf-iso`: `DiscoverNotifier[3379]: No new version found` (21:59 UTC+1),

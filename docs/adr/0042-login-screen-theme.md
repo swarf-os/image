@@ -1,6 +1,6 @@
 # 0042 — Light login screen after choosing the dark theme
 
-Date: 2026-11-05. Status: proposed (no image change until the maintainer agrees).
+Date: 2026-11-05. Status: accepted (maintainer, 2026-11-08: option 1, it is KDE's behaviour, not ours).
 
 ## Problem
 Packard Bell, 2026-11-04: dark theme chosen in Plasma Setup, Plasma is dark, the login screen stays
@@ -26,6 +26,9 @@ light. The maintainer says Fedora does the same.
    `org.kde.kcontrol.kcmplasmalogin.sync` KAuth action). Fixes it for everyone, but we own code
    that KDE should own.
 3. Ship a dark greeter by default. Wrong for users who pick the light theme.
+
+## Decision
+Option 1: no image change, README note. Reporting it to KDE stays the maintainer's call.
 
 ## Seen
 - 2026-11-05, VM `swarf-iso45` (F45 ISO from PR #48), dark theme chosen in Plasma Setup, after a
