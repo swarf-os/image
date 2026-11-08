@@ -90,7 +90,8 @@ the tool accepts an installed wallpaper package). Full procedure:
   `:stable` only after I merge a pull request.
 - `bootc-fetch-apply-updates.timer` (it reboots without asking) and `rpm-ostreed-automatic.timer`
   are disabled. Do not use `dnf` on the machine. Firmware updates come through Discover (fwupd).
-- Not seen yet: a real update staged by Discover on an installed machine (PROGRESS.md).
+- Seen in a VM installed from the ISO (2026-11-08): Discover staged the update, by hand and
+  unattended, and the machine booted it. Not seen yet on real hardware (PROGRESS.md).
 - Every published build has its own version, `<Fedora version>.<build number>` (for example
   `45.20261108.0.63`), so Discover offers our fixes too, not only a new Fedora version
   ([ADR 0043](docs/adr/0043-discover-sees-version-not-digest.md)).
