@@ -1201,6 +1201,7 @@ qt6-qtbase-common.noarch
 qt6-qtbase-gui.x86_64
 qt6-qtbase.x86_64
 qt6-qtdeclarative.x86_64
+qt6-qtgraphs.x86_64
 qt6-qtlocation.x86_64
 qt6-qtmultimedia.x86_64
 qt6-qtpdf.x86_64
