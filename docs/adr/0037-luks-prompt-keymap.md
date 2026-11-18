@@ -63,4 +63,8 @@ chrooted `ostree admin` failed with "No such file or directory" (seen, below). L
   positions unlocks; `/proc/cmdline` has one `vconsole.keymap=fr-oss`. `/boot` was `ro` at `%post`
   and went back to `ro`. `/boot` is mounted twice on the same path there, so `findmnt` prints two
   lines; the whole-word `ro` match still works.
-- NOT seen yet: the same after a Discover update (same ostree deployment path).
+- SEEN (2026-11-18, VM `swarf-iso1115`, installed from the published ISO of 2026-11-15): Discover staged
+  `45.20261118.0.159` unattended (no click, no password); after the reboot one `vconsole.keymap=fr-oss`
+  on `/proc/cmdline` and one in each BLS entry (new and rollback); `asdfgh` on a French keyboard unlocks
+  (typed by the maintainer). PROGRESS Session 17.
+- NOT seen yet: the same after a Discover update on the Packard Bell.
