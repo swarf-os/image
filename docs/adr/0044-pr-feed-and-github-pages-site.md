@@ -1,7 +1,8 @@
 # 0044 — An RSS feed of CI pull requests, and the download page moves to GitHub Pages
 
-Date: 2026-11-18. Status: accepted (maintainer, 2026-11-18). Nothing is built yet: this ADR records
-the decision; the work is split in two pull requests (below).
+Date: 2026-11-18. Status: accepted (maintainer, 2026-11-18). The feed (step 1) is built (ADR 0045).
+The download-page part (the "Download page on GitHub Pages" decision and step 2) is superseded by
+ADR 0046: the page stays on the Worker and Pages serves only the feed.
 
 ## Problem
 - GitHub offers no feed for pull requests (as far as I know; not checked from the agent's sandbox,
