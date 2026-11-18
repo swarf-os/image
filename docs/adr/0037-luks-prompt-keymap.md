@@ -66,5 +66,5 @@ chrooted `ostree admin` failed with "No such file or directory" (seen, below). L
 - SEEN (2026-11-18, VM `swarf-iso1115`, installed from the published ISO of 2026-11-15): Discover staged
   `45.20261118.0.159` unattended (no click, no password); after the reboot one `vconsole.keymap=fr-oss`
   on `/proc/cmdline` and one in each BLS entry (new and rollback); `asdfgh` on a French keyboard unlocks
-  (typed by the maintainer). PROGRESS Session 17.
+  (typed by the maintainer through SPICE, keys sent by position). PROGRESS Session 17.
 - NOT seen yet: the same after a Discover update on the Packard Bell.
