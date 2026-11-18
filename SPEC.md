@@ -2,6 +2,7 @@
 
 Draft 12 · 2026-10-29 · names decided (`swarf-os`). Fedora bootc path; the Arch version is kept as `claude/SPEC-arch-backup.md` in the planning project (fallback if this path becomes too hard). Kyanite archive (read for draft 8): `fbmguerin/archive-kyanite-os-fedora-custom`.
 Sources: the Kyanite ADRs, Containerfile, lists and roadmap (read 2026-10-29), plus two Arch/distro comparison reports. Items marked (to verify) were not checked against a primary source in this draft.
+Draft 15 (2026-11-18): RSS feed of the CI and Dependabot pull requests on GitHub Pages, `https://swarf-os.github.io/image/feed.xml` (ADR 0044, 0045); the download page stays on the Worker (ADR 0046).
 Draft 14 (2026-11-05, step 9): README written (ADR 0036); audio set of six packages and its rollback consequence (ADR 0035).
 Draft 13 (2026-11-03, step 7): Cloudflare decided (ADR 0029 to 0031): one ISO in R2, not two (free tier), release folders `YYYYMMDD-HHMM/`, Worker on `workers.dev`, client-side visual word; `SHA256SUMS` stays keyless (ADR 0023).
 Draft 12 (2026-10-29, step 5): CI decided (ADR 0013 to 0017): public GHCR image, base `fedora-bootc:latest` with a pull request on any manifest change including `VERSION_ID`, manifest gate without versions or digests.
