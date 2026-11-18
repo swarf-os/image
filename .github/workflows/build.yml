@@ -3,8 +3,8 @@ name: build
 # Daily: build, check, publish :testing, boot test, then :stable (same digest) or a drift pull
 # request. Pull requests from this repository only build, check and boot test (no push, no
 # issue): they answer "does CI still work". A pull request that only touches files the image does
-# not contain (docs, root Markdown, the download page Worker) skips it (ADR 0032). All logic lives
-# in tools/.
+# not contain (docs, root Markdown, the download page Worker, the Pages site) skips it (ADR 0032,
+# 0045). All logic lives in tools/.
 on:
   schedule:
     - cron: '17 4 * * *'
@@ -17,6 +17,8 @@ on:
       - 'worker/**'
       - 'tests/worker-check.sh'
       - '.github/workflows/worker.yml'
+      - 'site/**'
+      - '.github/workflows/site.yml'
   workflow_dispatch:
 
 concurrency:
@@ -132,6 +134,14 @@ jobs:
       - name: Drift pull request (:stable waits)
         if: env.PUBLISH == 'true' && steps.check.outputs.rc == '10'
         run: tools/drift-pr.sh "${{ steps.publish.outputs.digest }}"
+
+      # A pull request opened with GITHUB_TOKEN starts no pull_request workflow, but a
+      # workflow_dispatch does start one (ADR 0045): refresh the pull request feed. The feed
+      # is not worth a red run (and a drift issue): the schedule of site.yml catches up.
+      - name: Refresh the pull request feed
+        if: env.PUBLISH == 'true' && steps.check.outputs.rc == '10'
+        continue-on-error: true
+        run: gh workflow run site.yml --ref main --repo "$GITHUB_REPOSITORY"
 
       - name: Close the drift issue
         if: env.PUBLISH == 'true' && success()

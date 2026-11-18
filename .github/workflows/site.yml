@@ -1,0 +1,78 @@
+name: site
+
+# Publish site/ and feed.xml with GitHub Pages (ADR 0044, 0045). The feed lists the open pull
+# requests of the CI and Dependabot (tools/pr-feed.sh). Only main deploys: the github-pages
+# environment is limited to main, and every deploy replaces the whole site.
+# Triggers:
+#   workflow_dispatch   build.yml starts it after tools/drift-pr.sh (a pull request opened with
+#                       GITHUB_TOKEN starts no pull_request workflow); also by hand
+#   pull_request_target a pull request of the CI or Dependabot opened, reopened or closed. It runs
+#                       on main (GITHUB_REF is the default branch, which the github-pages
+#                       environment accepts; a pull_request run has refs/pull/N/merge). It checks
+#                       out main, never the pull request: no untrusted code runs with that token.
+#   schedule            a net for what the others miss (a Dependabot rebase, a lost dispatch)
+#   pull_request        a change to the site files: build only, nothing is deployed
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '43 */6 * * *'
+  pull_request_target:
+    types: [opened, reopened, closed]
+  pull_request:
+    paths:
+      - 'site/**'
+      - 'tools/pr-feed.sh'
+      - '.github/workflows/site.yml'
+
+# One group for every trigger that deploys: a Pages deployment replaces the whole site, and a
+# pending run is replaced by a newer one, which builds a fresh feed anyway. Pull request builds
+# deploy nothing and queue by themselves.
+concurrency:
+  group: ${{ github.event_name == 'pull_request' && format('site-pr-{0}', github.ref) || 'site' }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    # pull_request_target: only the pull requests the feed is about.
+    if: >-
+      github.event_name != 'pull_request_target'
+      || contains(fromJSON('["github-actions[bot]","dependabot[bot]"]'), github.event.pull_request.user.login)
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build the site and the feed
+        run: |
+          mkdir _site
+          cp -r site/. _site/
+          tools/pr-feed.sh _site/feed.xml
+
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
