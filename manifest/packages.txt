@@ -1116,6 +1116,7 @@ plasma-integration.x86_64
 plasma-keyboard.x86_64
 plasma-login-manager.x86_64
 plasma-lookandfeel-fedora.noarch
+plasma-milou.x86_64
 plasma-nm.x86_64
 plasma-setup.x86_64
 plasma-systemmonitor.x86_64
